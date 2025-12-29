@@ -1,0 +1,243 @@
+# Studio Direction Project Rules
+
+You are an expert React developer helping build a project portfolio management system.
+
+## Project Context
+
+This is a web app for "Studio Direction" to manage and present project portfolios to clients. It has:
+- Admin panel (password-protected) for managing projects and pages
+- Public presentation pages with fullscreen image sliders
+
+## Tech Stack (MUST USE)
+
+- React 18 with Vite
+- React Router v6 for routing
+- Tailwind CSS for styling
+- Firebase Firestore for database
+- Firebase Storage for images
+- Swiper.js for sliders
+- @dnd-kit for drag and drop
+- Lucide React for icons
+- React Hot Toast for notifications
+
+## Design Rules (STRICT)
+
+### Colors
+- Background: #000000 (pure black) ONLY
+- Text: #FFFFFF (pure white) ONLY
+- No other colors allowed
+- Use opacity variations (white/10, white/20, etc.) for subtle effects
+
+### UI Style
+- Minimalist and clean
+- White borders on components (border-white/10 or border-white/20)
+- Buttons: White bg with black text OR transparent with white border
+- Inputs: Transparent bg, white border, white text
+- Hover states: Use white/5 or white/10 backgrounds
+
+### Typography
+- Use Inter font or system fonts
+- Keep it clean and readable
+- Good contrast (white on black)
+
+## Code Style
+
+### File Structure
+```
+src/
+├── components/     # Reusable components
+├── pages/          # Route page components
+├── hooks/          # Custom React hooks
+├── lib/            # Utilities and configs
+├── context/        # React contexts
+└── App.jsx
+```
+
+### Naming Conventions
+- Components: PascalCase (ProjectList.jsx)
+- Hooks: camelCase with 'use' prefix (useProjects.js)
+- Utilities: camelCase (firebase.js)
+- CSS classes: Tailwind utilities only
+
+### Component Patterns
+- Use functional components with hooks
+- Extract reusable logic into custom hooks
+- Keep components focused and single-purpose
+- Use proper prop destructuring
+
+### State Management
+- Use React Context for auth state
+- Use custom hooks for Firebase operations
+- Keep local state in components when appropriate
+
+## Firebase Patterns
+
+### Firestore Operations
+```javascript
+// Always use these patterns:
+import { collection, doc, getDocs, addDoc, updateDoc, deleteDoc, query, where, orderBy } from 'firebase/firestore';
+
+// Use custom hooks that return { data, loading, error }
+```
+
+### Storage Operations
+```javascript
+// Always use these patterns:
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+
+// Upload pattern: upload -> get URL -> store URL in Firestore
+```
+
+## Authentication Rules
+
+- Password: "direkcija2025" (hardcoded, stored in localStorage when correct)
+- Check auth on mount for admin routes
+- Show PasswordGate component if not authenticated
+- Store auth state in context
+
+## Route Structure
+
+```
+/                                           -> Redirect to /admin
+/admin                                      -> Dashboard (protected)
+/admin/projects                             -> Projects list (protected)
+/admin/projects/new                         -> New project (protected)
+/admin/projects/:id                         -> Edit project (protected)
+/admin/pages                                -> Pages archive (protected)
+/admin/pages/new                            -> New page (protected)
+/admin/pages/:id                            -> Edit page (protected)
+/studio-direction-selected-projects/:slug   -> Public presentation
+```
+
+## Component Requirements
+
+### PasswordGate
+- Modal overlay on black background
+- Single password input
+- Submit button
+- Error message for wrong password
+- Store in localStorage on success
+
+### ImageUploader
+- Accept 1-3 images
+- Show previews
+- Allow reorder (drag & drop)
+- Allow individual delete
+- Return File objects for upload
+
+### PageBuilder
+- Page name input
+- Slug input (auto-generate from name)
+- Show URL preview
+- Content list (draggable items)
+- Add Project button (opens selector)
+- Add Slide Break button (adds inline form)
+- Save button
+
+### FullscreenSlider (Swiper)
+- 100vw x 100vh
+- Horizontal slides
+- Navigation arrows
+- Pagination dots
+- Keyboard navigation
+- Touch support
+
+### SlideBreakSlide
+- Full black background
+- Title: large, bold
+- Text: smaller, regular
+- Position: bottom-right corner
+- Left-aligned text
+- Padding: 48px from edges
+
+## Error Handling
+
+- Always show loading states
+- Always handle errors gracefully
+- Use toast notifications for feedback
+- Show confirmation dialogs for delete actions
+
+## Confirmation Dialog
+
+Always require confirmation for:
+- Deleting a project
+- Deleting a page
+- Removing an item from page content
+
+Dialog should:
+- Have clear warning message
+- Have Cancel and Confirm buttons
+- Confirm button should be visually distinct (could use red or white)
+
+## Responsive Design
+
+- Mobile-first approach
+- Sidebar collapses on mobile
+- Tables become cards on mobile
+- Touch-friendly buttons (min 44px tap target)
+- Presentation works on all devices
+
+## Performance
+
+- Lazy load routes
+- Optimize images before upload (if possible)
+- Use proper React keys
+- Avoid unnecessary re-renders
+- Clean up Firebase listeners on unmount
+
+## What NOT to do
+
+- Don't use any colors other than black and white
+- Don't use Firebase Auth (use simple password)
+- Don't overcomplicate the auth system
+- Don't skip loading states
+- Don't skip error handling
+- Don't skip confirmation dialogs
+- Don't use inline styles (use Tailwind)
+- Don't create deeply nested components
+
+## When Asked to Create Components
+
+1. First understand the requirements
+2. Check if similar component exists
+3. Follow existing patterns in codebase
+4. Use Tailwind for all styling
+5. Add proper TypeScript types (if using TS)
+6. Handle loading and error states
+7. Make it responsive
+8. Test the component
+
+## When Asked to Fix Bugs
+
+1. Understand the expected behavior
+2. Identify the root cause
+3. Fix without breaking other features
+4. Test the fix thoroughly
+5. Consider edge cases
+
+## Firebase Security Note
+
+For development, use permissive rules:
+```javascript
+// Firestore rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
+
+// Storage rules
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if true;
+    }
+  }
+}
+```
+
+For production, implement proper security rules.
