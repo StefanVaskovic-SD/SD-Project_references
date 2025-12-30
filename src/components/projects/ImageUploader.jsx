@@ -1,48 +1,13 @@
 import { useState, useCallback, useEffect } from 'react'
-import { X, GripVertical, Upload } from 'lucide-react'
+import { X, ChevronUp, ChevronDown, Upload } from 'lucide-react'
 import { Button } from '../ui/Button'
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core'
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
 
 const MAX_IMAGES = 3
 const MIN_IMAGES = 1
 
-function SortableImage({ image, index, onDelete }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: image.id })
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  }
-
+function ImageItem({ image, index, totalImages, onDelete, onMoveUp, onMoveDown }) {
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className="relative group border border-white/20 rounded-lg overflow-hidden bg-black"
-    >
+    <div className="relative group border border-white/20 rounded-lg overflow-hidden bg-black">
       <img
         src={image.preview}
         alt={`Preview ${index + 1}`}
@@ -51,15 +16,38 @@ function SortableImage({ image, index, onDelete }) {
       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors flex items-center justify-center">
         <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
-            {...attributes}
-            {...listeners}
-            className="p-2 bg-white/10 hover:bg-white/20 rounded text-white cursor-grab active:cursor-grabbing"
-            title="Drag to reorder"
+            type="button"
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              if (onMoveUp) onMoveUp()
+            }}
+            disabled={index === 0}
+            className="p-2 bg-white/10 hover:bg-white/20 rounded text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            title="Move up"
           >
-            <GripVertical className="w-5 h-5" />
+            <ChevronUp className="w-5 h-5" />
           </button>
           <button
-            onClick={() => onDelete(image.id)}
+            type="button"
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              if (onMoveDown) onMoveDown()
+            }}
+            disabled={index === totalImages - 1}
+            className="p-2 bg-white/10 hover:bg-white/20 rounded text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            title="Move down"
+          >
+            <ChevronDown className="w-5 h-5" />
+          </button>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              onDelete(image.id)
+            }}
             className="p-2 bg-white/10 hover:bg-white/20 rounded text-white"
             title="Delete image"
           >
@@ -107,13 +95,6 @@ export function ImageUploader({ label, images = [], existingImages = [], onChang
     })
   }, [existingImages])
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
-
   const handleFileSelect = useCallback((e) => {
     const files = Array.from(e.target.files)
     setDragError('')
@@ -154,21 +135,51 @@ export function ImageUploader({ label, images = [], existingImages = [], onChang
     onChange(newFiles)
   }, [localImages, onChange, existingImages, onExistingImagesChange])
 
-  const handleDragEnd = (event) => {
-    const { active, over } = event
+  const handleMoveUp = useCallback((imageId) => {
+    setLocalImages((items) => {
+      const currentIndex = items.findIndex((item) => item.id === imageId)
+      if (currentIndex <= 0) return items
 
-    if (over && active.id !== over.id) {
-      setLocalImages((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id)
-        const newIndex = items.findIndex((item) => item.id === over.id)
-        const newItems = arrayMove(items, oldIndex, newIndex)
-        // Only return new File objects, not existing URLs
-        const newFiles = newItems.filter((img) => !img.isExisting).map((img) => img.file)
-        onChange(newFiles)
-        return newItems
-      })
-    }
-  }
+      const newItems = [...items]
+      const temp = newItems[currentIndex]
+      newItems[currentIndex] = newItems[currentIndex - 1]
+      newItems[currentIndex - 1] = temp
+
+      // Update existing images order
+      const updatedExisting = newItems.filter((img) => img.isExisting).map((img) => img.url)
+      if (onExistingImagesChange) {
+        onExistingImagesChange(updatedExisting)
+      }
+
+      // Return only new File objects
+      const newFiles = newItems.filter((img) => !img.isExisting && img.file).map((img) => img.file)
+      onChange(newFiles)
+      return newItems
+    })
+  }, [onChange, onExistingImagesChange])
+
+  const handleMoveDown = useCallback((imageId) => {
+    setLocalImages((items) => {
+      const currentIndex = items.findIndex((item) => item.id === imageId)
+      if (currentIndex >= items.length - 1) return items
+
+      const newItems = [...items]
+      const temp = newItems[currentIndex]
+      newItems[currentIndex] = newItems[currentIndex + 1]
+      newItems[currentIndex + 1] = temp
+
+      // Update existing images order
+      const updatedExisting = newItems.filter((img) => img.isExisting).map((img) => img.url)
+      if (onExistingImagesChange) {
+        onExistingImagesChange(updatedExisting)
+      }
+
+      // Return only new File objects
+      const newFiles = newItems.filter((img) => !img.isExisting && img.file).map((img) => img.file)
+      onChange(newFiles)
+      return newItems
+    })
+  }, [onChange, onExistingImagesChange])
 
   const handleDrop = useCallback((e) => {
     e.preventDefault()
@@ -250,27 +261,19 @@ export function ImageUploader({ label, images = [], existingImages = [], onChang
           </div>
         ) : (
           <div className="space-y-4">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-            >
-              <SortableContext
-                items={localImages.map((img) => img.id)}
-                strategy={verticalListSortingStrategy}
-              >
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {localImages.map((image, index) => (
-                    <SortableImage
-                      key={image.id}
-                      image={image}
-                      index={index}
-                      onDelete={handleDelete}
-                    />
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {localImages.map((image, index) => (
+                <ImageItem
+                  key={image.id}
+                  image={image}
+                  index={index}
+                  totalImages={localImages.length}
+                  onDelete={handleDelete}
+                  onMoveUp={() => handleMoveUp(image.id)}
+                  onMoveDown={() => handleMoveDown(image.id)}
+                />
+              ))}
+            </div>
 
             {localImages.length < MAX_IMAGES && (
               <div className="text-center">
