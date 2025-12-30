@@ -20,7 +20,7 @@ export function SlideBreakSlide({ title, text, slideNumber }) {
         </div>
         {/* Slide Number - Top Right */}
         {slideNumber && (
-          <div className="p-3 bg-black/80 border border-white/20 rounded-full text-white text-sm" style={{ fontFamily: 'SuisseIntl', fontWeight: 400 }}>
+          <div className="w-[46px] h-[46px] bg-black/80 border border-white/20 rounded-full text-white text-sm flex items-center justify-center" style={{ fontFamily: 'SuisseIntl', fontWeight: 400 }}>
             {slideNumber}
           </div>
         )}
