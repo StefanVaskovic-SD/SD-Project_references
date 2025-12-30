@@ -3,22 +3,19 @@ export function SlideBreakSlide({ title, text }) {
     <div 
       className="relative w-screen h-screen bg-black flex flex-col justify-between p-12"
       style={{
-        backgroundImage: 'url(/Brake slide.png)',
+        backgroundImage: 'url(/brake-slide.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
       }}
     >
       {/* Logo - Top Left */}
-      <div className="flex items-center gap-2">
+      <div>
         <img 
           src="/sd-logo.svg" 
           alt="StudioDirection" 
           className="h-6 w-auto"
         />
-        <span className="text-white text-xl font-medium" style={{ fontFamily: 'SuisseIntl', fontWeight: 500 }}>
-          StudioDirection™
-        </span>
       </div>
 
       {/* Heading and Text - Bottom Left */}
