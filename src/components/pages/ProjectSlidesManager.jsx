@@ -47,6 +47,7 @@ function SortableSlideItem({ slide, index, isSelected, onToggle, onDelete }) {
       `}
     >
       <button
+        type="button"
         {...attributes}
         {...listeners}
         className="p-1 text-white/60 hover:text-white cursor-grab active:cursor-grabbing"
@@ -66,6 +67,7 @@ function SortableSlideItem({ slide, index, isSelected, onToggle, onDelete }) {
 
       <div className="flex items-center gap-2">
         <button
+          type="button"
           onClick={onToggle}
           className="p-2 text-white/60 hover:text-white hover:bg-white/5 rounded transition-colors"
           title={isSelected ? 'Hide slide' : 'Show slide'}
@@ -78,6 +80,7 @@ function SortableSlideItem({ slide, index, isSelected, onToggle, onDelete }) {
         </button>
         {!isSelected && (
           <button
+            type="button"
             onClick={onDelete}
             className="p-2 text-white/60 hover:text-red-500 hover:bg-white/5 rounded transition-colors"
             title="Remove slide"
@@ -135,15 +138,21 @@ export function ProjectSlidesManager({
   }
 
   const handleDragEnd = (event) => {
+    event.stopPropagation()
     const { active, over } = event
 
     if (over && active.id !== over.id) {
       setSelectedSlideUrls((items) => {
         const oldIndex = items.findIndex((url) => url === active.id)
         const newIndex = items.findIndex((url) => url === over.id)
+        if (oldIndex === -1 || newIndex === -1) return items
         return arrayMove(items, oldIndex, newIndex)
       })
     }
+  }
+
+  const handleDragStart = (event) => {
+    event.stopPropagation()
   }
 
   const handleSave = () => {
@@ -166,9 +175,19 @@ export function ProjectSlidesManager({
   const selectedSlidesList = allSlides.filter(slide => selectedSlideUrls.includes(slide))
   const unselectedSlidesList = allSlides.filter(slide => !selectedSlideUrls.includes(slide))
 
+  const handleModalClick = (e) => {
+    e.stopPropagation()
+  }
+
   return (
-    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-      <div className="bg-black border border-white/20 rounded-lg max-w-4xl w-full max-h-[90vh] flex flex-col">
+    <div 
+      className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-black border border-white/20 rounded-lg max-w-4xl w-full max-h-[90vh] flex flex-col"
+        onClick={handleModalClick}
+      >
         {/* Header */}
         <div className="p-6 border-b border-white/10">
           <h2 className="text-2xl font-bold text-white mb-2">
@@ -209,6 +228,7 @@ export function ProjectSlidesManager({
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
               >
                 <SortableContext

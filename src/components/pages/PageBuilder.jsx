@@ -201,6 +201,7 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
   }
 
   return (
+    <>
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
@@ -381,16 +382,18 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
         </div>
       )}
 
-      {editingProjectSlides && (
-        <ProjectSlidesManager
-          isOpen={!!editingProjectSlides}
-          onClose={() => setEditingProjectSlides(null)}
-          project={getProjectById(editingProjectSlides.projectId)}
-          selectedSlides={editingProjectSlides.selectedSlides}
-          onSave={handleSaveProjectSlides}
-        />
-      )}
     </form>
+
+    {editingProjectSlides && (
+      <ProjectSlidesManager
+        isOpen={!!editingProjectSlides}
+        onClose={() => setEditingProjectSlides(null)}
+        project={getProjectById(editingProjectSlides.projectId)}
+        selectedSlides={editingProjectSlides.selectedSlides}
+        onSave={handleSaveProjectSlides}
+      />
+    )}
+  </>
   )
 }
 
