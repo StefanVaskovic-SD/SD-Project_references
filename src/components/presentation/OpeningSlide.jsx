@@ -14,7 +14,7 @@ export function OpeningSlide({
   const expandedHlsRef = useRef(null)
   const [isVideoExpanded, setIsVideoExpanded] = useState(false)
 
-  // Initialize video in normal view
+  // Initialize preview video (loop, auto-play)
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
@@ -26,12 +26,17 @@ export function OpeningSlide({
       hls.loadSource(videoUrl)
       hls.attachMedia(video)
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        // Don't auto-play in normal view
+        video.play().catch((err) => {
+          console.error('Error playing preview video:', err)
+        })
       })
       hlsRef.current = hls
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       // Native HLS support (Safari)
       video.src = videoUrl
+      video.play().catch((err) => {
+        console.error('Error playing preview video:', err)
+      })
     }
 
     return () => {
@@ -41,7 +46,7 @@ export function OpeningSlide({
     }
   }, [videoUrl])
 
-  // Initialize video in expanded view
+  // Initialize expanded video (plays when opened)
   useEffect(() => {
     const video = expandedVideoRef.current
     if (!video || !isVideoExpanded) return
@@ -54,7 +59,7 @@ export function OpeningSlide({
       hls.attachMedia(video)
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         video.play().catch((err) => {
-          console.error('Error playing video:', err)
+          console.error('Error playing expanded video:', err)
         })
       })
       expandedHlsRef.current = hls
@@ -62,7 +67,7 @@ export function OpeningSlide({
       // Native HLS support (Safari)
       video.src = videoUrl
       video.play().catch((err) => {
-        console.error('Error playing video:', err)
+        console.error('Error playing expanded video:', err)
       })
     }
 
