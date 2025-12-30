@@ -5,12 +5,20 @@ export function ProjectSlide({
   liveWebsiteLabel,
   sdWorkLink,
   sdWorkLabel,
+  slideNumber,
 }) {
   const hasLiveWebsite = liveWebsiteLink && liveWebsiteLink.trim() !== ''
   const hasSdWork = sdWorkLink && sdWorkLink.trim() !== ''
 
   return (
     <div className="relative w-screen h-screen flex items-center justify-center bg-black">
+      {/* Slide Number - Top Right */}
+      {slideNumber && (
+        <div className="absolute top-4 right-4 text-white/60 text-sm" style={{ fontFamily: 'SuisseIntl', fontWeight: 400 }}>
+          {slideNumber}
+        </div>
+      )}
+      
       <img
         src={slideUrl}
         alt={projectName || 'Project slide'}

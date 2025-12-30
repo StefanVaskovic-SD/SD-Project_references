@@ -48,25 +48,30 @@ export function FullscreenSlider({ slides, startSlide }) {
         </SwiperSlide>
 
         {/* Content Slides */}
-        {slides.map((slide, index) => (
-          <SwiperSlide key={index} className="!w-screen !h-screen">
-            {slide.type === 'project' ? (
-              <ProjectSlide
-                slideUrl={slide.imageUrl}
-                projectName={slide.projectName}
-                liveWebsiteLink={slide.liveWebsiteLink}
-                liveWebsiteLabel={slide.liveWebsiteLabel}
-                sdWorkLink={slide.sdWorkLink}
-                sdWorkLabel={slide.sdWorkLabel}
-              />
-            ) : (
-              <SlideBreakSlide
-                title={slide.title}
-                text={slide.text}
-              />
-            )}
-          </SwiperSlide>
-        ))}
+        {slides.map((slide, index) => {
+          const slideNumber = index + 2 // Start from 2 (after opening slide)
+          return (
+            <SwiperSlide key={index} className="!w-screen !h-screen">
+              {slide.type === 'project' ? (
+                <ProjectSlide
+                  slideUrl={slide.imageUrl}
+                  projectName={slide.projectName}
+                  liveWebsiteLink={slide.liveWebsiteLink}
+                  liveWebsiteLabel={slide.liveWebsiteLabel}
+                  sdWorkLink={slide.sdWorkLink}
+                  sdWorkLabel={slide.sdWorkLabel}
+                  slideNumber={slideNumber}
+                />
+              ) : (
+                <SlideBreakSlide
+                  title={slide.title}
+                  text={slide.text}
+                  slideNumber={slideNumber}
+                />
+              )}
+            </SwiperSlide>
+          )
+        })}
 
         {/* Closing Slide - Always Last */}
         <SwiperSlide key="closing" className="!w-screen !h-screen">

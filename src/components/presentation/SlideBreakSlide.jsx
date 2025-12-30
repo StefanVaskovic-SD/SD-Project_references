@@ -1,4 +1,4 @@
-export function SlideBreakSlide({ title, text }) {
+export function SlideBreakSlide({ title, text, slideNumber }) {
   return (
     <div 
       className="relative w-screen h-screen bg-black flex flex-col justify-between p-12"
@@ -10,12 +10,20 @@ export function SlideBreakSlide({ title, text }) {
       }}
     >
       {/* Logo - Top Left */}
-      <div>
-        <img 
-          src="/sd-logo.svg" 
-          alt="StudioDirection" 
-          className="h-6 w-auto"
-        />
+      <div className="flex items-start justify-between">
+        <div>
+          <img 
+            src="/sd-logo.svg" 
+            alt="StudioDirection" 
+            className="h-6 w-auto"
+          />
+        </div>
+        {/* Slide Number - Top Right */}
+        {slideNumber && (
+          <div className="text-white/60 text-sm" style={{ fontFamily: 'SuisseIntl', fontWeight: 400 }}>
+            {slideNumber}
+          </div>
+        )}
       </div>
 
       {/* Heading and Text - Bottom Left */}
