@@ -241,7 +241,7 @@ export function ProjectForm({ project = null }) {
               Saving...
             </>
           ) : (
-            project ? 'Update Project' : 'Create Project'
+            project ? 'Update Project' : 'Save'
           )}
         </Button>
         <Button
