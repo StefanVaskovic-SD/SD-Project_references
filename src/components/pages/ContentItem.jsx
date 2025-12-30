@@ -97,8 +97,13 @@ export function ContentItem({
         <div className="flex gap-2">
           {item.type === 'project' && onEditSlides && project && (
             <Button
+              type="button"
               variant="secondary"
-              onClick={() => onEditSlides(item)}
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                onEditSlides(item)
+              }}
               className="text-sm"
             >
               Manage Slides
