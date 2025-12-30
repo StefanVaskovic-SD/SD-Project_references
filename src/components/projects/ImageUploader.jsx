@@ -1,11 +1,11 @@
 import { useState, useCallback, useEffect } from 'react'
-import { X, ChevronUp, ChevronDown, Upload } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, Upload } from 'lucide-react'
 import { Button } from '../ui/Button'
 
 const MAX_IMAGES = 3
 const MIN_IMAGES = 1
 
-function ImageItem({ image, index, totalImages, onDelete, onMoveUp, onMoveDown }) {
+function ImageItem({ image, index, totalImages, onDelete, onMoveLeft, onMoveRight }) {
   return (
     <div className="relative group border border-white/20 rounded-lg overflow-hidden bg-black">
       <img
@@ -20,26 +20,26 @@ function ImageItem({ image, index, totalImages, onDelete, onMoveUp, onMoveDown }
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
-              if (onMoveUp) onMoveUp()
+              if (onMoveLeft) onMoveLeft()
             }}
             disabled={index === 0}
             className="p-2 bg-white/10 hover:bg-white/20 rounded text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            title="Move up"
+            title="Move left"
           >
-            <ChevronUp className="w-5 h-5" />
+            <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             type="button"
             onClick={(e) => {
               e.preventDefault()
               e.stopPropagation()
-              if (onMoveDown) onMoveDown()
+              if (onMoveRight) onMoveRight()
             }}
             disabled={index === totalImages - 1}
             className="p-2 bg-white/10 hover:bg-white/20 rounded text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-            title="Move down"
+            title="Move right"
           >
-            <ChevronDown className="w-5 h-5" />
+            <ChevronRight className="w-5 h-5" />
           </button>
           <button
             type="button"
@@ -135,7 +135,7 @@ export function ImageUploader({ label, images = [], existingImages = [], onChang
     onChange(newFiles)
   }, [localImages, onChange, existingImages, onExistingImagesChange])
 
-  const handleMoveUp = useCallback((imageId) => {
+  const handleMoveLeft = useCallback((imageId) => {
     setLocalImages((items) => {
       const currentIndex = items.findIndex((item) => item.id === imageId)
       if (currentIndex <= 0) return items
@@ -158,7 +158,7 @@ export function ImageUploader({ label, images = [], existingImages = [], onChang
     })
   }, [onChange, onExistingImagesChange])
 
-  const handleMoveDown = useCallback((imageId) => {
+  const handleMoveRight = useCallback((imageId) => {
     setLocalImages((items) => {
       const currentIndex = items.findIndex((item) => item.id === imageId)
       if (currentIndex >= items.length - 1) return items
@@ -269,8 +269,8 @@ export function ImageUploader({ label, images = [], existingImages = [], onChang
                   index={index}
                   totalImages={localImages.length}
                   onDelete={handleDelete}
-                  onMoveUp={() => handleMoveUp(image.id)}
-                  onMoveDown={() => handleMoveDown(image.id)}
+                  onMoveLeft={() => handleMoveLeft(image.id)}
+                  onMoveRight={() => handleMoveRight(image.id)}
                 />
               ))}
             </div>
