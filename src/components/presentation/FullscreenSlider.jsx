@@ -6,7 +6,7 @@ import { OpeningSlide } from './OpeningSlide'
 import { ClosingSlide } from './ClosingSlide'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
-export function FullscreenSlider({ slides }) {
+export function FullscreenSlider({ slides, startSlide }) {
   if (!slides || slides.length === 0) {
     return (
       <div className="w-screen h-screen bg-black flex items-center justify-center">
@@ -39,7 +39,12 @@ export function FullscreenSlider({ slides }) {
       >
         {/* Opening Slide - Always First */}
         <SwiperSlide key="opening" className="!w-screen !h-screen">
-          <OpeningSlide />
+          <OpeningSlide 
+            videoUrl={startSlide?.videoUrl}
+            title={startSlide?.title}
+            fontWeight={startSlide?.fontWeight}
+            fontSize={startSlide?.fontSize}
+          />
         </SwiperSlide>
 
         {/* Content Slides */}

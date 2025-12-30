@@ -124,5 +124,5 @@ export function PresentationPage() {
     )
   }
 
-  return <FullscreenSlider slides={slides} />
+  return <FullscreenSlider slides={slides} startSlide={page.startSlide} />
 }

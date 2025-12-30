@@ -1,7 +1,12 @@
 import { useEffect, useRef } from 'react'
 import Hls from 'hls.js'
 
-export function OpeningSlide({ videoUrl = 'https://customer-7ahfkoeo2pbpo29s.cloudflarestream.com/b28021ef74c9a19e977887d1517205ca/manifest/video.m3u8' }) {
+export function OpeningSlide({ 
+  videoUrl = 'https://customer-7ahfkoeo2pbpo29s.cloudflarestream.com/b28021ef74c9a19e977887d1517205ca/manifest/video.m3u8',
+  title = 'Portfolio',
+  fontWeight = '500',
+  fontSize = '8xl'
+}) {
   const videoRef = useRef(null)
 
   useEffect(() => {
@@ -48,9 +53,19 @@ export function OpeningSlide({ videoUrl = 'https://customer-7ahfkoeo2pbpo29s.clo
         </div>
 
         {/* Portfolio Text - Bottom Center */}
-        <div className="flex-1 flex items-end pb-12">
-          <h1 className="text-white text-8xl md:text-9xl font-medium tracking-tight" style={{ fontFamily: 'SuisseIntl', fontWeight: 500 }}>
-            Portfolio
+        <div className="flex-1 flex items-end justify-center pb-12">
+          <h1 
+            className="text-white tracking-tight"
+            style={{ 
+              fontFamily: 'SuisseIntl', 
+              fontWeight: parseInt(fontWeight),
+              fontSize: fontSize === '6xl' ? '3.75rem' : 
+                        fontSize === '7xl' ? '4.5rem' :
+                        fontSize === '8xl' ? '6rem' :
+                        fontSize === '9xl' ? '8rem' : '6rem'
+            }}
+          >
+            {title}
           </h1>
         </div>
 

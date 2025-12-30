@@ -14,6 +14,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { Input } from '../ui/Input'
+import { Select } from '../ui/Select'
 import { Button } from '../ui/Button'
 import { ContentItem } from './ContentItem'
 import { ProjectSelector } from './ProjectSelector'
@@ -33,6 +34,12 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
   const [editingSlideBreak, setEditingSlideBreak] = useState(null)
   const [editingProjectSlides, setEditingProjectSlides] = useState(null)
   const [loading, setLoading] = useState(false)
+  
+  // Start slide settings
+  const [startSlideVideoUrl, setStartSlideVideoUrl] = useState('https://customer-7ahfkoeo2pbpo29s.cloudflarestream.com/b28021ef74c9a19e977887d1517205ca/manifest/video.m3u8')
+  const [startSlideTitle, setStartSlideTitle] = useState('Portfolio')
+  const [startSlideFontWeight, setStartSlideFontWeight] = useState('500')
+  const [startSlideFontSize, setStartSlideFontSize] = useState('8xl')
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -54,6 +61,14 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
         return item
       })
       setContent(contentWithSlides)
+      
+      // Load start slide settings
+      if (page.startSlide) {
+        setStartSlideVideoUrl(page.startSlide.videoUrl || 'https://customer-7ahfkoeo2pbpo29s.cloudflarestream.com/b28021ef74c9a19e977887d1517205ca/manifest/video.m3u8')
+        setStartSlideTitle(page.startSlide.title || 'Portfolio')
+        setStartSlideFontWeight(page.startSlide.fontWeight || '500')
+        setStartSlideFontSize(page.startSlide.fontSize || '8xl')
+      }
     }
   }, [page])
 
@@ -193,6 +208,12 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
           ...item,
           order: index,
         })),
+        startSlide: {
+          videoUrl: startSlideVideoUrl.trim(),
+          title: startSlideTitle.trim(),
+          fontWeight: startSlideFontWeight,
+          fontSize: startSlideFontSize,
+        },
       })
     } catch (error) {
       console.error('Error saving page:', error)
@@ -252,6 +273,54 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
           </p>
         </div>
       )}
+
+      {/* Start Slide Settings */}
+      <div className="space-y-4 p-6 bg-white/5 border border-white/10 rounded-lg">
+        <h3 className="text-lg font-medium text-white mb-4">Start Slide Settings</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Input
+            label="Video URL"
+            value={startSlideVideoUrl}
+            onChange={(e) => setStartSlideVideoUrl(e.target.value)}
+            placeholder="https://..."
+            helpText="HLS video URL for the opening slide"
+          />
+
+          <Input
+            label="Title"
+            value={startSlideTitle}
+            onChange={(e) => setStartSlideTitle(e.target.value)}
+            placeholder="Portfolio"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Select
+            label="Font Weight"
+            value={startSlideFontWeight}
+            onChange={(e) => setStartSlideFontWeight(e.target.value)}
+            options={[
+              { value: '400', label: 'Regular (400)' },
+              { value: '500', label: 'Medium (500)' },
+              { value: '600', label: 'Semi Bold (600)' },
+              { value: '700', label: 'Bold (700)' },
+            ]}
+          />
+
+          <Select
+            label="Font Size"
+            value={startSlideFontSize}
+            onChange={(e) => setStartSlideFontSize(e.target.value)}
+            options={[
+              { value: '6xl', label: '6xl' },
+              { value: '7xl', label: '7xl' },
+              { value: '8xl', label: '8xl' },
+              { value: '9xl', label: '9xl' },
+            ]}
+          />
+        </div>
+      </div>
 
       <div>
         <div className="flex items-center justify-between mb-4">
