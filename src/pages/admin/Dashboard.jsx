@@ -67,7 +67,7 @@ export function Dashboard() {
           <Link to="/admin/pages/new">
             <Button variant="primary" className="w-full flex items-center justify-center">
               <FileText className="w-4 h-4 mr-2" />
-              New presentation
+              New Presentation
             </Button>
           </Link>
         </div>

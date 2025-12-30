@@ -182,7 +182,7 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
             setPageName(e.target.value)
             if (errors.pageName) setErrors((prev) => ({ ...prev, pageName: '' }))
           }}
-          placeholder="e.g., BMW & Audi Collection"
+          placeholder="Use name of the client or general name (for ex. Real estate all projects)"
           required
           error={errors.pageName}
         />
@@ -194,7 +194,7 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
             setSlug(e.target.value)
             if (errors.slug) setErrors((prev) => ({ ...prev, slug: '' }))
           }}
-          placeholder="bmw-audi-collection"
+          placeholder="Use something unique <client name>-real-estate-portfolio"
           required
           error={errors.slug}
           helpText="Used in the presentation URL"
@@ -236,6 +236,14 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
               Add Slide Break
             </Button>
           </div>
+        </div>
+
+        <div className="mb-4 p-4 bg-white/5 border border-white/10 rounded-lg">
+          <p className="text-sm text-white/80 leading-relaxed">
+            Follow the structure when creating new presentation: Opening slide, Break slide if there will be more than one category (for ex. product and website & brand). 
+            Add as much projects you'd like to showcase; select slides for each project and reorder them.
+            Click Save to generate the link (it can be updated afterwards on the edit icon in the list of presentations)
+          </p>
         </div>
 
         {errors.content && (
@@ -289,7 +297,7 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
               Saving...
             </>
           ) : (
-            page ? 'Update Page' : 'Create Page'
+            'Save'
           )}
         </Button>
         {onCancel && (
