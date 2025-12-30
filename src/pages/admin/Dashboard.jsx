@@ -96,7 +96,7 @@ export function Dashboard() {
                   <tr className="border-b border-white/10">
                     <th className="text-left py-3 px-4 text-white/60 font-medium text-sm">Name</th>
                     <th className="text-left py-3 px-4 text-white/60 font-medium text-sm">Slug</th>
-                    <th className="text-left py-3 px-4 text-white/60 font-medium text-sm">Items</th>
+                    <th className="text-left py-3 px-4 text-white/60 font-medium text-sm">Projects</th>
                     <th className="text-left py-3 px-4 text-white/60 font-medium text-sm">Created</th>
                     <th className="text-right py-3 px-4 text-white/60 font-medium text-sm">Actions</th>
                   </tr>
@@ -114,7 +114,7 @@ export function Dashboard() {
                         <code className="text-white/80 text-sm font-mono">{page.slug}</code>
                       </td>
                       <td className="py-3 px-4 text-white/80">
-                        {page.content?.length || 0} items
+                        {page.content?.filter(item => item.type === 'project').length || 0} {page.content?.filter(item => item.type === 'project').length === 1 ? 'project' : 'projects'}
                       </td>
                       <td className="py-3 px-4 text-white/80 text-sm">
                         {formatDate(page.createdAt)}
