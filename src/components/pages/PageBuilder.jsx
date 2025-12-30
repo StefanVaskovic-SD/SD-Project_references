@@ -140,7 +140,6 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
   }
 
   const handleEditProjectSlides = (item) => {
-    // Prevent form submission when opening modal
     setEditingProjectSlides(item)
   }
 
@@ -158,16 +157,7 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
     setEditingProjectSlides(null)
   }
 
-  const handleDragStart = (event) => {
-    // Prevent any form interaction during drag
-    event.stopPropagation()
-    // Mark that we're dragging to prevent form submission
-    event.dataTransfer.effectAllowed = 'move'
-  }
-
   const handleDragEnd = (event) => {
-    event.stopPropagation()
-    event.preventDefault()
     const { active, over } = event
 
     if (over && active.id !== over.id) {
@@ -235,14 +225,7 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
 
   return (
     <>
-    <form 
-      onSubmit={handleSubmit} 
-      className="space-y-6" 
-      onDragOver={(e) => e.preventDefault()}
-      onDragEnter={(e) => e.preventDefault()}
-      onDragLeave={(e) => e.preventDefault()}
-      onDrop={(e) => e.preventDefault()}
-    >
+    <form onSubmit={handleSubmit} className="space-y-6" onDragOver={(e) => e.preventDefault()}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <Input
@@ -391,22 +374,13 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
-            onDragCancel={(e) => {
-              e.stopPropagation()
-              e.preventDefault()
-            }}
           >
             <SortableContext
               items={content.map((item, idx) => item.id || idx)}
               strategy={verticalListSortingStrategy}
             >
-              <div 
-                className="space-y-3"
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => e.preventDefault()}
-              >
+              <div className="space-y-3">
                 {content.map((item, index) => (
                   <ContentItem
                     key={item.id || index}
