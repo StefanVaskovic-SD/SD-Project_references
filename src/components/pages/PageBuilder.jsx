@@ -35,7 +35,11 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
   const [loading, setLoading] = useState(false)
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -142,17 +146,26 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
   }
 
   const handleDragEnd = (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+    
     const { active, over } = event
 
     if (over && active.id !== over.id) {
       setContent((items) => {
         const oldIndex = items.findIndex((item) => (item.id || items.indexOf(item)) === active.id)
         const newIndex = items.findIndex((item) => (item.id || items.indexOf(item)) === over.id)
+        if (oldIndex === -1 || newIndex === -1) return items
         const newItems = arrayMove(items, oldIndex, newIndex)
         // Update order
         return newItems.map((item, index) => ({ ...item, order: index }))
       })
     }
+  }
+
+  const handleDragStart = (event) => {
+    event.preventDefault()
+    event.stopPropagation()
   }
 
   const validate = () => {
@@ -303,6 +316,7 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
+            onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
           >
             <SortableContext

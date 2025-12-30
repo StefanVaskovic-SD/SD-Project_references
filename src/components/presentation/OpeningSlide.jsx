@@ -45,13 +45,10 @@ export function OpeningSlide({ videoUrl = 'https://customer-7ahfkoeo2pbpo29s.clo
             alt="StudioDirection" 
             className="h-6 w-auto"
           />
-          <span className="text-white text-xl font-medium" style={{ fontFamily: 'SuisseIntl', fontWeight: 500 }}>
-            StudioDirection™
-          </span>
         </div>
 
-        {/* Portfolio Text - Centered Vertically */}
-        <div className="flex-1 flex items-center">
+        {/* Portfolio Text - Bottom Center */}
+        <div className="flex-1 flex items-end justify-center pb-12">
           <h1 className="text-white text-8xl md:text-9xl font-medium tracking-tight" style={{ fontFamily: 'SuisseIntl', fontWeight: 500 }}>
             Portfolio
           </h1>
@@ -91,12 +88,6 @@ export function OpeningSlide({ videoUrl = 'https://customer-7ahfkoeo2pbpo29s.clo
           </div>
         </div>
 
-        {/* Bottom Right Text */}
-        <div className="absolute bottom-8 right-12">
-          <p className="text-white text-xs uppercase tracking-wider" style={{ fontFamily: 'SuisseIntl', fontWeight: 400 }}>
-            PROJECT SHOWCASE 2024
-          </p>
-        </div>
       </div>
     </div>
   )

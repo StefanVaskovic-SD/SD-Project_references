@@ -34,10 +34,13 @@ export function ContentItem({
     >
       <div className="flex items-start gap-4">
         <button
+          type="button"
           {...attributes}
           {...listeners}
           className="mt-1 p-1 text-white/60 hover:text-white cursor-grab active:cursor-grabbing"
           title="Drag to reorder"
+          onMouseDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
         >
           <GripVertical className="w-5 h-5" />
         </button>
