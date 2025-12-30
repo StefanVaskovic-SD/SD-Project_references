@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../ui/Button'
 import { Input } from '../ui/Input'
+import { Select } from '../ui/Select'
 import { ImageUploader } from './ImageUploader'
 import { createProject, updateProject } from '../../hooks/useProjects'
 import { uploadMultipleFiles } from '../../lib/storage'
@@ -111,19 +112,49 @@ export function ProjectForm({ project = null }) {
     }
   }
 
+  const typeOptions = ['product', 'website', 'website & branding', 'branding', 'vision framing']
+  const industryOptions = [
+    'Real Estate',
+    'Crypto & Web3',
+    'Fintech',
+    'Lifestyle',
+    'Retail',
+    'Entertainment',
+    'Engineering',
+    'Data',
+    'Healthcare',
+    'Law'
+  ]
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <Input
-        label="Project Name"
-        name="name"
-        value={formData.name}
-        onChange={handleChange}
-        placeholder="e.g., BMW Campaign"
-        required
-        error={errors.name}
-      />
+      <div>
+        <Input
+          label="Project Name"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          placeholder="e.g., BMW Campaign"
+          required
+          error={errors.name}
+        />
+        <div className="mt-2 p-4 bg-white/5 border border-white/10 rounded-lg">
+          <p className="text-sm text-white/80 leading-relaxed">
+            Use the name from the{' '}
+            <a 
+              href="https://studiodirection.com/work" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-white underline hover:text-white/80"
+            >
+              StudioDirection - Our Work page
+            </a>
+          </p>
+        </div>
+      </div>
 
       <ImageUploader
+        label="1 to 3 slides (.png 1.5x-2x exported from figma and optimized/converted to webp)"
         images={images}
         existingImages={existingImages}
         onChange={(newFiles) => {
@@ -134,20 +165,22 @@ export function ProjectForm({ project = null }) {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Input
+        <Select
           label="Type"
           name="type"
           value={formData.type}
           onChange={handleChange}
-          placeholder="e.g., Web Design"
+          placeholder="Select type"
+          options={typeOptions}
         />
 
-        <Input
+        <Select
           label="Industry"
           name="industry"
           value={formData.industry}
           onChange={handleChange}
-          placeholder="e.g., Automotive"
+          placeholder="Select industry"
+          options={industryOptions}
         />
       </div>
 
@@ -161,7 +194,7 @@ export function ProjectForm({ project = null }) {
       />
 
       <Input
-        label="SD Work Link"
+        label="SD Work Label"
         name="sdWorkLink"
         type="url"
         value={formData.sdWorkLink}

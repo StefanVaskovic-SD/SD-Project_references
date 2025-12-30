@@ -22,7 +22,7 @@ export function ProjectsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-white mb-2">Projects</h1>
-            <p className="text-white/60">Manage your project portfolio</p>
+            <p className="text-white/60">Manage SD project portfolio</p>
           </div>
           <Link to="/admin/projects/new">
             <Button variant="primary">

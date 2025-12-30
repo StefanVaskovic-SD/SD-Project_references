@@ -176,13 +176,13 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Input
-          label="Page Name"
+          label="Presentation name"
           value={pageName}
           onChange={(e) => {
             setPageName(e.target.value)
             if (errors.pageName) setErrors((prev) => ({ ...prev, pageName: '' }))
           }}
-          placeholder="Use name of the client or general name (for ex. Real estate all projects)"
+          placeholder="Real estate all projects"
           required
           error={errors.pageName}
         />
@@ -194,11 +194,20 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
             setSlug(e.target.value)
             if (errors.slug) setErrors((prev) => ({ ...prev, slug: '' }))
           }}
-          placeholder="Use something unique <client name>-real-estate-portfolio"
+          placeholder="real-estate-portfolio"
           required
           error={errors.slug}
           helpText="Used in the presentation URL"
         />
+      </div>
+
+      <div className="mb-4 p-4 bg-white/5 border border-white/10 rounded-lg">
+        <p className="text-sm text-white/80 leading-relaxed mb-2">
+          <strong className="text-white">Presentation name:</strong> Use name of the client or general name (for ex. Real estate all projects)
+        </p>
+        <p className="text-sm text-white/80 leading-relaxed">
+          <strong className="text-white">URL Slug:</strong> Use something unique &lt;client name&gt;-real-estate-portfolio
+        </p>
       </div>
 
       {slug && (

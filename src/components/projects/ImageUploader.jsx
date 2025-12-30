@@ -74,7 +74,7 @@ function SortableImage({ image, index, onDelete }) {
   )
 }
 
-export function ImageUploader({ images = [], existingImages = [], onChange, onExistingImagesChange, error }) {
+export function ImageUploader({ label, images = [], existingImages = [], onChange, onExistingImagesChange, error }) {
   // Initialize with existing images (URLs) converted to preview format
   const [localImages, setLocalImages] = useState(() => {
     const existing = existingImages.map((url, index) => ({
@@ -206,10 +206,12 @@ export function ImageUploader({ images = [], existingImages = [], onChange, onEx
 
   return (
     <div className="w-full">
-      <label className="block text-sm font-medium mb-2 text-white">
-        Images <span className="text-white/60">({MIN_IMAGES}-{MAX_IMAGES})</span>
-        <span className="text-white/60 ml-1">*</span>
-      </label>
+      {label && (
+        <label className="block text-sm font-medium mb-2 text-white">
+          {label}
+          <span className="text-white/60 ml-1">*</span>
+        </label>
+      )}
 
       <div
         onDrop={handleDrop}
@@ -227,10 +229,10 @@ export function ImageUploader({ images = [], existingImages = [], onChange, onEx
           <div className="text-center py-8">
             <Upload className="w-12 h-12 text-white/40 mx-auto mb-4" />
             <p className="text-white/60 mb-2">
-              Drag and drop images here, or click to select
+              Drag and drop slides here, or click to select
             </p>
             <p className="text-white/40 text-sm mb-4">
-              Upload {MIN_IMAGES}-{MAX_IMAGES} images
+              Upload 1 to 3 slides exported from Figma
             </p>
             <input
               type="file"
@@ -242,7 +244,7 @@ export function ImageUploader({ images = [], existingImages = [], onChange, onEx
             />
             <label htmlFor="image-upload">
               <Button variant="secondary" as="span" className="cursor-pointer">
-                Select Images
+                Select slides
               </Button>
             </label>
           </div>
@@ -282,7 +284,7 @@ export function ImageUploader({ images = [], existingImages = [], onChange, onEx
                 />
                 <label htmlFor="image-upload-more">
                   <Button variant="secondary" as="span" className="cursor-pointer">
-                    Add More Images
+                    Add More Slides
                   </Button>
                 </label>
               </div>
@@ -297,7 +299,7 @@ export function ImageUploader({ images = [], existingImages = [], onChange, onEx
 
       {localImages.length > 0 && (
         <p className="mt-2 text-sm text-white/60">
-          {localImages.length} of {MAX_IMAGES} images {existingImages.length > 0 ? '(including existing)' : ''}
+          {localImages.length} of {MAX_IMAGES} slides {existingImages.length > 0 ? '(including existing)' : ''}
         </p>
       )}
     </div>
