@@ -57,6 +57,10 @@ export function PresentationPage() {
                   type: 'project',
                   imageUrl: slideUrl,
                   projectName: projectData.name,
+                  liveWebsiteLink: projectData.liveWebsiteLink || null,
+                  liveWebsiteLabel: projectData.liveWebsiteLabel || null,
+                  sdWorkLink: projectData.sdWorkLink || null,
+                  sdWorkLabel: projectData.sdWorkLabel || null,
                 })
               })
             }

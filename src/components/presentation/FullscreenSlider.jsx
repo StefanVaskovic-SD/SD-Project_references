@@ -41,6 +41,10 @@ export function FullscreenSlider({ slides }) {
               <ProjectSlide
                 slideUrl={slide.imageUrl}
                 projectName={slide.projectName}
+                liveWebsiteLink={slide.liveWebsiteLink}
+                liveWebsiteLabel={slide.liveWebsiteLabel}
+                sdWorkLink={slide.sdWorkLink}
+                sdWorkLabel={slide.sdWorkLabel}
               />
             ) : (
               <SlideBreakSlide
@@ -54,13 +58,13 @@ export function FullscreenSlider({ slides }) {
 
       {/* Custom Navigation Buttons */}
       <button
-        className="swiper-button-prev-custom absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full text-white transition-colors"
+        className="swiper-button-prev-custom absolute left-4 top-1/2 -translate-y-1/2 z-10 p-3 bg-black/80 hover:bg-black border border-white/20 rounded-full text-white transition-colors"
         aria-label="Previous slide"
       >
         <ChevronLeft className="w-6 h-6" />
       </button>
       <button
-        className="swiper-button-next-custom absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full text-white transition-colors"
+        className="swiper-button-next-custom absolute right-4 top-1/2 -translate-y-1/2 z-10 p-3 bg-black/80 hover:bg-black border border-white/20 rounded-full text-white transition-colors"
         aria-label="Next slide"
       >
         <ChevronRight className="w-6 h-6" />
