@@ -18,6 +18,7 @@ import { Button } from '../ui/Button'
 import { ContentItem } from './ContentItem'
 import { ProjectSelector } from './ProjectSelector'
 import { SlideBreakForm } from './SlideBreakForm'
+import { ProjectSlidesManager } from './ProjectSlidesManager'
 import { useProjects } from '../../hooks/useProjects'
 import { Plus, Loader2 } from 'lucide-react'
 
@@ -30,6 +31,7 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
   const [isProjectSelectorOpen, setIsProjectSelectorOpen] = useState(false)
   const [isSlideBreakFormOpen, setIsSlideBreakFormOpen] = useState(false)
   const [editingSlideBreak, setEditingSlideBreak] = useState(null)
+  const [editingProjectSlides, setEditingProjectSlides] = useState(null)
   const [loading, setLoading] = useState(false)
 
   const sensors = useSensors(
@@ -43,7 +45,15 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
     if (page) {
       setPageName(page.name || '')
       setSlug(page.slug || '')
-      setContent(page.content || [])
+      // Initialize selectedSlides for projects that don't have it
+      const contentWithSlides = (page.content || []).map(item => {
+        if (item.type === 'project' && !item.selectedSlides) {
+          // For existing projects without selectedSlides, we'll set it when we have project data
+          return item
+        }
+        return item
+      })
+      setContent(contentWithSlides)
     }
   }, [page])
 
@@ -70,6 +80,7 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
       type: 'project',
       projectId: project.id,
       order: content.length,
+      selectedSlides: project.slides || [], // Default: all slides selected
     }
     setContent([...content, newItem])
   }
@@ -111,6 +122,23 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
     const index = content.findIndex((c) => c.id === item.id)
     setEditingSlideBreak(index)
     setIsSlideBreakFormOpen(true)
+  }
+
+  const handleEditProjectSlides = (item) => {
+    setEditingProjectSlides(item)
+  }
+
+  const handleSaveProjectSlides = (selectedSlides) => {
+    if (!editingProjectSlides) return
+
+    setContent((prev) =>
+      prev.map((item) =>
+        item.id === editingProjectSlides.id
+          ? { ...item, selectedSlides }
+          : item
+      )
+    )
+    setEditingProjectSlides(null)
   }
 
   const handleDragEnd = (event) => {
@@ -290,6 +318,7 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
                     project={item.type === 'project' ? getProjectById(item.projectId) : null}
                     onDelete={handleDeleteItem}
                     onEdit={item.type === 'slideBreak' ? handleEditSlideBreak : null}
+                    onEditSlides={item.type === 'project' ? handleEditProjectSlides : null}
                   />
                 ))}
               </div>
@@ -350,6 +379,16 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
             />
           </div>
         </div>
+      )}
+
+      {editingProjectSlides && (
+        <ProjectSlidesManager
+          isOpen={!!editingProjectSlides}
+          onClose={() => setEditingProjectSlides(null)}
+          project={getProjectById(editingProjectSlides.projectId)}
+          selectedSlides={editingProjectSlides.selectedSlides}
+          onSave={handleSaveProjectSlides}
+        />
       )}
     </form>
   )

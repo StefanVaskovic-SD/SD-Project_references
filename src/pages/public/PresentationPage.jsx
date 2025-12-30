@@ -50,9 +50,14 @@ export function PresentationPage() {
           const result = projectResults.find((r) => r?.item.projectId === item.projectId)
           if (result?.projectData) {
             const projectData = result.projectData
+            // Use selectedSlides if available, otherwise use all slides
+            const slidesToUse = item.selectedSlides && item.selectedSlides.length > 0
+              ? item.selectedSlides
+              : (projectData.slides || [])
+            
             // Add each slide from the project as a separate slide
-            if (projectData.slides && projectData.slides.length > 0) {
-              projectData.slides.forEach((slideUrl) => {
+            if (slidesToUse.length > 0) {
+              slidesToUse.forEach((slideUrl) => {
                 slidesArray.push({
                   type: 'project',
                   imageUrl: slideUrl,

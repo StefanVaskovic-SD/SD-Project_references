@@ -8,7 +8,8 @@ export function ContentItem({
   index, 
   project = null, 
   onDelete, 
-  onEdit 
+  onEdit,
+  onEditSlides
 }) {
   const {
     attributes,
@@ -54,15 +55,23 @@ export function ContentItem({
                       {project.industry && <span>{project.industry}</span>}
                     </div>
                     {project.slides && project.slides.length > 0 && (
-                      <div className="mt-2 flex gap-2">
-                        {project.slides.slice(0, 3).map((slide, idx) => (
-                          <img
-                            key={idx}
-                            src={slide}
-                            alt={`${project.name} slide ${idx + 1}`}
-                            className="w-16 h-16 object-cover rounded border border-white/10"
-                          />
-                        ))}
+                      <div className="mt-2">
+                        <div className="flex gap-2 mb-1">
+                          {(item.selectedSlides || project.slides).slice(0, 3).map((slide, idx) => (
+                            <img
+                              key={idx}
+                              src={slide}
+                              alt={`${project.name} slide ${idx + 1}`}
+                              className="w-16 h-16 object-cover rounded border border-white/10"
+                            />
+                          ))}
+                        </div>
+                        <p className="text-xs text-white/60">
+                          {item.selectedSlides 
+                            ? `${item.selectedSlides.length} of ${project.slides.length} slides selected`
+                            : `${project.slides.length} slides`
+                          }
+                        </p>
                       </div>
                     )}
                   </>
@@ -85,6 +94,15 @@ export function ContentItem({
         </div>
 
         <div className="flex gap-2">
+          {item.type === 'project' && onEditSlides && project && (
+            <Button
+              variant="secondary"
+              onClick={() => onEditSlides(item)}
+              className="text-sm"
+            >
+              Manage Slides
+            </Button>
+          )}
           {item.type === 'slideBreak' && onEdit && (
             <Button
               variant="secondary"
