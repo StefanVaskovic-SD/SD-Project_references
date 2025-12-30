@@ -14,7 +14,7 @@ export function ProjectSlide({
     <div className="relative w-screen h-screen flex items-center justify-center bg-black">
       {/* Slide Number - Top Right */}
       {slideNumber && (
-        <div className="absolute top-4 right-4 text-white/60 text-sm" style={{ fontFamily: 'SuisseIntl', fontWeight: 400 }}>
+        <div className="absolute top-4 right-4 z-10 p-3 bg-black/80 border border-white/20 rounded-full text-white text-sm" style={{ fontFamily: 'SuisseIntl', fontWeight: 400 }}>
           {slideNumber}
         </div>
       )}
