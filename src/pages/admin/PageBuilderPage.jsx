@@ -64,7 +64,7 @@ export function PageBuilderPage() {
             {id ? 'Edit Presentation' : 'New Presentation'}
           </h1>
           <p className="text-white/60">
-            {id ? 'Update presentation content and settings' : 'Create a new presentation'}
+            {id ? 'Update presentation content and settings' : 'Start creating a presentation'}
           </p>
         </div>
 
