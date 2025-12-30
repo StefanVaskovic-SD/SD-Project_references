@@ -146,6 +146,7 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
   const handleSaveProjectSlides = (selectedSlides) => {
     if (!editingProjectSlides) return
 
+    // Prevent any form submission
     setContent((prev) =>
       prev.map((item) =>
         item.id === editingProjectSlides.id

@@ -24,7 +24,15 @@ function SlideItem({ slide, index, isSelected, onToggle }) {
 
       <button
         type="button"
-        onClick={onToggle}
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          onToggle()
+        }}
+        onMouseDown={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+        }}
         className="p-2 text-white/60 hover:text-white hover:bg-white/5 rounded transition-colors"
         title={isSelected ? 'Hide slide' : 'Show slide'}
       >
@@ -86,7 +94,6 @@ export function ProjectSlidesManager({
 
   const handleModalClick = (e) => {
     e.stopPropagation()
-    e.preventDefault()
   }
 
   const handleBackdropClick = (e) => {
@@ -99,12 +106,12 @@ export function ProjectSlidesManager({
     <div 
       className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
       onClick={handleBackdropClick}
-      onMouseDown={(e) => e.preventDefault()}
+      onDragOver={(e) => e.preventDefault()}
     >
       <div 
         className="bg-black border border-white/20 rounded-lg max-w-4xl w-full max-h-[90vh] flex flex-col"
         onClick={handleModalClick}
-        onMouseDown={(e) => e.stopPropagation()}
+        onDragOver={(e) => e.preventDefault()}
       >
         {/* Header */}
         <div className="p-6 border-b border-white/10">
@@ -117,14 +124,22 @@ export function ProjectSlidesManager({
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        <div 
+          className="flex-1 overflow-y-auto p-6 space-y-4"
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => e.preventDefault()}
+        >
           {/* Selected Slides */}
           {selectedSlidesList.length > 0 && (
             <div>
               <h3 className="text-lg font-medium text-white mb-3">
                 Selected Slides ({selectedSlidesList.length})
               </h3>
-              <div className="space-y-2">
+              <div 
+                className="space-y-2"
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => e.preventDefault()}
+              >
                 {selectedSlidesList.map((slide, index) => (
                   <SlideItem
                     key={slide}
@@ -144,7 +159,11 @@ export function ProjectSlidesManager({
               <h3 className="text-lg font-medium text-white mb-3">
                 Hidden Slides ({unselectedSlidesList.length})
               </h3>
-              <div className="space-y-2">
+              <div 
+                className="space-y-2"
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => e.preventDefault()}
+              >
                 {unselectedSlidesList.map((slide, index) => (
                   <SlideItem
                     key={slide}
