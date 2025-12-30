@@ -9,11 +9,41 @@ export function OpeningSlide({
   fontSize = '8xl'
 }) {
   const videoRef = useRef(null)
+  const expandedVideoRef = useRef(null)
+  const hlsRef = useRef(null)
   const [isVideoExpanded, setIsVideoExpanded] = useState(false)
 
+  // Initialize video in normal view
   useEffect(() => {
     const video = videoRef.current
-    if (!video) return
+    if (!video || isVideoExpanded) return
+
+    let hls = null
+
+    if (Hls.isSupported()) {
+      hls = new Hls()
+      hls.loadSource(videoUrl)
+      hls.attachMedia(video)
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        // Don't auto-play in normal view
+      })
+      hlsRef.current = hls
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      // Native HLS support (Safari)
+      video.src = videoUrl
+    }
+
+    return () => {
+      if (hls) {
+        hls.destroy()
+      }
+    }
+  }, [videoUrl, isVideoExpanded])
+
+  // Initialize video in expanded view
+  useEffect(() => {
+    const video = expandedVideoRef.current
+    if (!video || !isVideoExpanded) return
 
     let hls = null
 
@@ -39,104 +69,99 @@ export function OpeningSlide({
         hls.destroy()
       }
     }
-  }, [videoUrl])
+  }, [videoUrl, isVideoExpanded])
 
   const handlePlayClick = () => {
     setIsVideoExpanded(true)
-    if (videoRef.current) {
-      videoRef.current.play()
-    }
   }
 
   const handleCloseVideo = () => {
     setIsVideoExpanded(false)
-    if (videoRef.current) {
-      videoRef.current.pause()
-      videoRef.current.currentTime = 0
+    if (expandedVideoRef.current) {
+      expandedVideoRef.current.pause()
+      expandedVideoRef.current.currentTime = 0
     }
   }
 
   return (
-    <>
-      <div className="relative w-screen h-screen bg-black flex">
-        {/* Left Section */}
-        <div className={`flex-1 flex flex-col justify-between p-12 transition-opacity duration-300 ${isVideoExpanded ? 'opacity-0 pointer-events-none' : ''}`}>
-          {/* Logo - Top Left */}
-          <div className="flex items-center gap-2">
-            <img 
-              src="/sd-logo.svg" 
-              alt="StudioDirection" 
-              className="h-6 w-auto"
-            />
-          </div>
-
-          {/* Portfolio Text - Bottom Center */}
-          <div className="flex-1 flex items-end pb-12">
-            <h1 
-              className="text-white tracking-tight"
-              style={{ 
-                fontFamily: 'SuisseIntl', 
-                fontWeight: parseInt(fontWeight),
-                fontSize: fontSize === '6xl' ? '3.75rem' : 
-                          fontSize === '7xl' ? '4.5rem' :
-                          fontSize === '8xl' ? '6rem' :
-                          fontSize === '9xl' ? '8rem' : '6rem',
-                lineHeight: '110%'
-              }}
-            >
-              {title}
-            </h1>
-          </div>
-
-          {/* Bottom Left - URL */}
-          <div>
-            <a 
-              href="https://studiodirection.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-white text-sm underline hover:no-underline"
-              style={{ fontFamily: 'SuisseIntl', fontWeight: 400 }}
-            >
-              studiodirection.com
-            </a>
-          </div>
+    <div className="relative w-screen h-screen bg-black">
+      {/* Left Section */}
+      <div className={`absolute left-0 top-0 w-1/2 h-full flex flex-col justify-between p-12 transition-opacity duration-300 z-10 ${isVideoExpanded ? 'opacity-0 pointer-events-none' : ''}`}>
+        {/* Logo - Top Left */}
+        <div className="flex items-center gap-2">
+          <img 
+            src="/sd-logo.svg" 
+            alt="StudioDirection" 
+            className="h-6 w-auto"
+          />
         </div>
 
-        {/* Right Section - Video */}
-        <div className={`flex-1 relative bg-black flex items-center justify-center p-8 transition-opacity duration-300 ${isVideoExpanded ? 'opacity-0 pointer-events-none' : ''}`}>
-          <div className="relative w-full h-full max-w-2xl rounded-lg overflow-hidden border-2" style={{ borderColor: 'rgba(59, 130, 246, 0.3)' }}>
-            {/* Video */}
-            {!isVideoExpanded && (
-              <video
-                ref={videoRef}
-                className="w-full h-full object-cover"
-                loop
-                muted
-                playsInline
-              />
-            )}
+        {/* Portfolio Text - Bottom Center */}
+        <div className="flex-1 flex items-end pb-12">
+          <h1 
+            className="text-white tracking-tight"
+            style={{ 
+              fontFamily: 'SuisseIntl', 
+              fontWeight: parseInt(fontWeight),
+              fontSize: fontSize === '6xl' ? '3.75rem' : 
+                        fontSize === '7xl' ? '4.5rem' :
+                        fontSize === '8xl' ? '6rem' :
+                        fontSize === '9xl' ? '8rem' : '6rem',
+              lineHeight: '110%'
+            }}
+          >
+            {title}
+          </h1>
+        </div>
 
-            {/* Play Button Overlay - Centered */}
-            {!isVideoExpanded && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <button
-                  onClick={handlePlayClick}
-                  className="w-24 h-24 bg-white rounded-full flex items-center justify-center opacity-90 hover:opacity-100 transition-opacity cursor-pointer"
-                  aria-label="Play video"
-                >
-                  <div className="w-0 h-0 border-l-[16px] border-l-black border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent ml-1"></div>
-                </button>
-              </div>
-            )}
-          </div>
+        {/* Bottom Left - URL */}
+        <div>
+          <a 
+            href="https://studiodirection.com" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-white text-sm underline hover:no-underline"
+            style={{ fontFamily: 'SuisseIntl', fontWeight: 400 }}
+          >
+            studiodirection.com
+          </a>
+        </div>
+      </div>
+
+      {/* Right Section - Video Container (always rendered) */}
+      <div className={`absolute right-0 top-0 w-1/2 h-full flex items-center justify-center p-8 transition-opacity duration-300 z-10 ${isVideoExpanded ? 'opacity-0 pointer-events-none' : ''}`}>
+        <div className="relative w-full h-full max-w-2xl rounded-lg overflow-hidden border-2" style={{ borderColor: 'rgba(59, 130, 246, 0.3)' }}>
+          {/* Video - always rendered but conditionally styled */}
+          {!isVideoExpanded && (
+            <video
+              ref={videoRef}
+              className="w-full h-full object-cover"
+              loop
+              muted
+              playsInline
+            />
+          )}
+
+          {/* Play Button Overlay - Centered */}
+          {!isVideoExpanded && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <button
+                onClick={handlePlayClick}
+                className="w-24 h-24 bg-white rounded-full flex items-center justify-center opacity-90 hover:opacity-100 transition-opacity cursor-pointer"
+                aria-label="Play video"
+              >
+                <div className="w-0 h-0 border-l-[16px] border-l-black border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent ml-1"></div>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Full Width Expanded Video Overlay */}
       {isVideoExpanded && (
-        <div className="fixed inset-0 z-50 bg-black">
+        <div className="fixed inset-0 z-50 bg-black flex items-center justify-center">
           <video
-            ref={videoRef}
+            ref={expandedVideoRef}
             className="w-full h-full object-contain"
             loop
             muted
@@ -153,7 +178,7 @@ export function OpeningSlide({
           </button>
         </div>
       )}
-    </>
+    </div>
   )
 }
 
