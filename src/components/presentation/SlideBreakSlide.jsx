@@ -31,7 +31,7 @@ export function SlideBreakSlide({ title, text, slideNumber }) {
         {title && (
           <h2 
             className="text-5xl md:text-6xl lg:text-7xl font-medium text-white mb-6"
-            style={{ fontFamily: 'SuisseIntl', fontWeight: 500 }}
+            style={{ fontFamily: 'SuisseIntl', fontWeight: 500, lineHeight: '110%' }}
           >
             {title}
           </h2>

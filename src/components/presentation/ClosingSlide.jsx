@@ -3,7 +3,7 @@ export function ClosingSlide() {
     <div className="w-screen h-screen bg-black flex flex-col items-center justify-center relative">
       {/* Main Content - Centered */}
       <div className="text-center">
-        <h1 className="text-white text-9xl md:text-[12rem] font-medium mb-4" style={{ fontFamily: 'SuisseIntl', fontWeight: 500 }}>
+        <h1 className="text-white text-9xl md:text-[12rem] font-medium mb-4" style={{ fontFamily: 'SuisseIntl', fontWeight: 500, lineHeight: '110%' }}>
           Fin
         </h1>
         <div className="flex items-center justify-center gap-2">

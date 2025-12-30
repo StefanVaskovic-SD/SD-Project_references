@@ -1,13 +1,15 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Hls from 'hls.js'
+import { X } from 'lucide-react'
 
 export function OpeningSlide({ 
-  videoUrl = 'https://customer-7ahfkoeo2pbpo29s.cloudflarestream.com/b28021ef74c9a19e977887d1517205ca/manifest/video.m3u8',
+  videoUrl = 'https://customer-7ahfkoeo2pbpo29s.cloudflarestream.com/228e34fe84dbb7606ada435352fc6a19/manifest/video.m3u8',
   title = 'Portfolio',
   fontWeight = '500',
   fontSize = '8xl'
 }) {
   const videoRef = useRef(null)
+  const [isVideoExpanded, setIsVideoExpanded] = useState(false)
 
   useEffect(() => {
     const video = videoRef.current
@@ -39,6 +41,44 @@ export function OpeningSlide({
     }
   }, [videoUrl])
 
+  const handlePlayClick = () => {
+    setIsVideoExpanded(true)
+    if (videoRef.current) {
+      videoRef.current.play()
+    }
+  }
+
+  const handleCloseVideo = () => {
+    setIsVideoExpanded(false)
+    if (videoRef.current) {
+      videoRef.current.pause()
+      videoRef.current.currentTime = 0
+    }
+  }
+
+  if (isVideoExpanded) {
+    return (
+      <div className="relative w-screen h-screen bg-black">
+        <video
+          ref={videoRef}
+          className="w-full h-full object-contain"
+          loop
+          muted
+          playsInline
+          autoPlay
+        />
+        {/* Close Button - Top Right */}
+        <button
+          onClick={handleCloseVideo}
+          className="absolute top-4 right-4 z-10 w-[46px] h-[46px] bg-black/80 border border-white/20 rounded-full text-white flex items-center justify-center hover:bg-black transition-colors"
+          aria-label="Close video"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+    )
+  }
+
   return (
     <div className="relative w-screen h-screen bg-black flex">
       {/* Left Section */}
@@ -62,7 +102,8 @@ export function OpeningSlide({
               fontSize: fontSize === '6xl' ? '3.75rem' : 
                         fontSize === '7xl' ? '4.5rem' :
                         fontSize === '8xl' ? '6rem' :
-                        fontSize === '9xl' ? '8rem' : '6rem'
+                        fontSize === '9xl' ? '8rem' : '6rem',
+              lineHeight: '110%'
             }}
           >
             {title}
@@ -96,13 +137,23 @@ export function OpeningSlide({
           />
 
           {/* Play Button Overlay - Centered */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center opacity-90">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <button
+              onClick={handlePlayClick}
+              className="w-24 h-24 bg-white rounded-full flex items-center justify-center opacity-90 hover:opacity-100 transition-opacity cursor-pointer"
+              aria-label="Play video"
+            >
               <div className="w-0 h-0 border-l-[16px] border-l-black border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent ml-1"></div>
-            </div>
+            </button>
           </div>
         </div>
 
+        {/* Bottom Right Text */}
+        <div className="absolute bottom-8 right-12">
+          <p className="text-white text-xs uppercase tracking-wider" style={{ fontFamily: 'SuisseIntl', fontWeight: 400 }}>
+            PROJECT SHOWCASE 2024
+          </p>
+        </div>
       </div>
     </div>
   )

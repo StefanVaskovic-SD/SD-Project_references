@@ -36,7 +36,7 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
   const [loading, setLoading] = useState(false)
   
   // Start slide settings
-  const [startSlideVideoUrl, setStartSlideVideoUrl] = useState('https://customer-7ahfkoeo2pbpo29s.cloudflarestream.com/b28021ef74c9a19e977887d1517205ca/manifest/video.m3u8')
+  const [startSlideVideoUrl, setStartSlideVideoUrl] = useState('https://customer-7ahfkoeo2pbpo29s.cloudflarestream.com/228e34fe84dbb7606ada435352fc6a19/manifest/video.m3u8')
   const [startSlideTitle, setStartSlideTitle] = useState('Portfolio')
   const [startSlideFontWeight, setStartSlideFontWeight] = useState('500')
   const [startSlideFontSize, setStartSlideFontSize] = useState('8xl')
@@ -64,7 +64,7 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
       
       // Load start slide settings
       if (page.startSlide) {
-        setStartSlideVideoUrl(page.startSlide.videoUrl || 'https://customer-7ahfkoeo2pbpo29s.cloudflarestream.com/b28021ef74c9a19e977887d1517205ca/manifest/video.m3u8')
+        setStartSlideVideoUrl(page.startSlide.videoUrl || 'https://customer-7ahfkoeo2pbpo29s.cloudflarestream.com/228e34fe84dbb7606ada435352fc6a19/manifest/video.m3u8')
         setStartSlideTitle(page.startSlide.title || 'Portfolio')
         setStartSlideFontWeight(page.startSlide.fontWeight || '500')
         setStartSlideFontSize(page.startSlide.fontSize || '8xl')
