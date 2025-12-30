@@ -15,15 +15,15 @@ export function PageBuilderPage() {
     try {
       if (id) {
         await updatePage(id, pageData)
-        toast.success('Page updated successfully')
+        toast.success('Presentation updated successfully')
       } else {
         await createPage(pageData)
-        toast.success('Page created successfully')
+        toast.success('Presentation created successfully')
       }
-      navigate('/admin/pages')
+      navigate('/admin')
     } catch (error) {
-      console.error('Error saving page:', error)
-      toast.error('Failed to save page. Please try again.')
+      console.error('Error saving presentation:', error)
+      toast.error('Failed to save presentation. Please try again.')
       throw error
     }
   }
@@ -46,10 +46,10 @@ export function PageBuilderPage() {
             <p className="text-red-500">{error}</p>
           </div>
           <button
-            onClick={() => navigate('/admin/pages')}
+            onClick={() => navigate('/admin')}
             className="text-white/60 hover:text-white"
           >
-            ← Back to Pages
+            ← Back to Presentations
           </button>
         </div>
       </AdminLayout>
@@ -61,10 +61,10 @@ export function PageBuilderPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">
-            {id ? 'Edit Page' : 'New Page'}
+            {id ? 'Edit Presentation' : 'New Presentation'}
           </h1>
           <p className="text-white/60">
-            {id ? 'Update page content and settings' : 'Create a new presentation page'}
+            {id ? 'Update presentation content and settings' : 'Create a new presentation'}
           </p>
         </div>
 
@@ -72,7 +72,7 @@ export function PageBuilderPage() {
           <PageBuilder
             page={page}
             onSave={handleSave}
-            onCancel={() => navigate('/admin/pages')}
+            onCancel={() => navigate('/admin')}
           />
         </div>
       </div>

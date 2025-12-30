@@ -37,7 +37,7 @@ export function PasswordGate() {
             Studio Direction
           </h1>
           <p className="text-white/60 text-center mb-8">
-            Enter password to access admin panel
+            Enter password to access portfolio tool
           </p>
 
           <form onSubmit={handleSubmit}>

@@ -19,11 +19,11 @@ export function PageList({ pages, loading, onRefresh }) {
 
     try {
       await deletePage(deleteDialog.page.id)
-      toast.success('Page deleted successfully')
+      toast.success('Presentation deleted successfully')
       onRefresh()
     } catch (error) {
       console.error('Error deleting page:', error)
-      toast.error('Failed to delete page. Please try again.')
+      toast.error('Failed to delete presentation. Please try again.')
     } finally {
       setDeleteDialog({ isOpen: false, page: null })
     }
@@ -50,7 +50,7 @@ export function PageList({ pages, loading, onRefresh }) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-white/60">Loading pages...</div>
+        <div className="text-white/60">Loading presentations...</div>
       </div>
     )
   }
@@ -58,10 +58,10 @@ export function PageList({ pages, loading, onRefresh }) {
   if (pages.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-white/60 mb-4">No pages yet</p>
+        <p className="text-white/60 mb-4">No presentations yet</p>
         <Link to="/admin/pages/new">
           <Button variant="primary">
-            Create First Page
+            Create First Presentation
           </Button>
         </Link>
       </div>
@@ -113,14 +113,14 @@ export function PageList({ pages, loading, onRefresh }) {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="p-2 text-white/60 hover:text-white hover:bg-white/5 rounded transition-colors"
-                      title="View page"
+                      title="View presentation"
                     >
                       <ExternalLink className="w-4 h-4" />
                     </a>
                     <Link to={`/admin/pages/${page.id}`}>
                       <button
                         className="p-2 text-white/60 hover:text-white hover:bg-white/5 rounded transition-colors"
-                        title="Edit page"
+                        title="Edit presentation"
                       >
                         <Edit className="w-4 h-4" />
                       </button>
@@ -128,7 +128,7 @@ export function PageList({ pages, loading, onRefresh }) {
                     <button
                       onClick={() => handleDeleteClick(page)}
                       className="p-2 text-white/60 hover:text-red-500 hover:bg-white/5 rounded transition-colors"
-                      title="Delete page"
+                      title="Delete presentation"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -144,7 +144,7 @@ export function PageList({ pages, loading, onRefresh }) {
         isOpen={deleteDialog.isOpen}
         onClose={() => setDeleteDialog({ isOpen: false, page: null })}
         onConfirm={handleDeleteConfirm}
-        title="Delete Page"
+        title="Delete Presentation"
         message={`Are you sure you want to delete "${deleteDialog.page?.name}"? This action cannot be undone.`}
         confirmText="Delete"
         cancelText="Cancel"

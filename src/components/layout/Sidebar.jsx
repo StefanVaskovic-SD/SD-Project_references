@@ -17,9 +17,8 @@ export function Sidebar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false)
 
   const navItems = [
-    { path: '/admin', icon: LayoutDashboard, label: 'Dashboard' },
+    { path: '/admin', icon: LayoutDashboard, label: 'Start here' },
     { path: '/admin/projects', icon: FolderKanban, label: 'Projects' },
-    { path: '/admin/pages', icon: FileText, label: 'Pages' },
   ]
 
   const isActive = (path) => {
@@ -52,7 +51,7 @@ export function Sidebar() {
           {/* Logo/Header */}
           <div className="p-6 border-b border-white/10">
             <h1 className="text-xl font-bold text-white">Studio Direction</h1>
-            <p className="text-sm text-white/60 mt-1">Admin Panel</p>
+            <p className="text-sm text-white/60 mt-1">Portfolio tool</p>
           </div>
 
           {/* Navigation */}
