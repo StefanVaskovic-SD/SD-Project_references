@@ -70,7 +70,9 @@ export function ProjectSlidesManager({
     }
   }
 
-  const handleSave = () => {
+  const handleSave = (e) => {
+    e?.preventDefault()
+    e?.stopPropagation()
     if (onSave) {
       onSave(selectedSlideUrls)
     }
@@ -84,16 +86,25 @@ export function ProjectSlidesManager({
 
   const handleModalClick = (e) => {
     e.stopPropagation()
+    e.preventDefault()
+  }
+
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose()
+    }
   }
 
   return (
     <div 
       className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
-      onClick={onClose}
+      onClick={handleBackdropClick}
+      onMouseDown={(e) => e.preventDefault()}
     >
       <div 
         className="bg-black border border-white/20 rounded-lg max-w-4xl w-full max-h-[90vh] flex flex-col"
         onClick={handleModalClick}
+        onMouseDown={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="p-6 border-b border-white/10">
@@ -156,10 +167,10 @@ export function ProjectSlidesManager({
 
         {/* Footer */}
         <div className="p-6 border-t border-white/10 flex justify-end gap-3">
-          <Button variant="secondary" onClick={onClose}>
+          <Button variant="secondary" onClick={onClose} type="button">
             Cancel
           </Button>
-          <Button variant="primary" onClick={handleSave}>
+          <Button variant="primary" onClick={handleSave} type="button">
             Save Changes
           </Button>
         </div>
