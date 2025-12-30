@@ -17,7 +17,9 @@ export function ProjectForm({ project = null }) {
     type: '',
     industry: '',
     liveWebsiteLink: '',
+    liveWebsiteLabel: '',
     sdWorkLink: '',
+    sdWorkLabel: '',
   })
   const [images, setImages] = useState([])
   const [existingImages, setExistingImages] = useState([])
@@ -30,7 +32,9 @@ export function ProjectForm({ project = null }) {
         type: project.type || '',
         industry: project.industry || '',
         liveWebsiteLink: project.liveWebsiteLink || '',
+        liveWebsiteLabel: project.liveWebsiteLabel || '',
         sdWorkLink: project.sdWorkLink || '',
+        sdWorkLabel: project.sdWorkLabel || '',
       })
       setExistingImages(project.slides || [])
       setImages([]) // Reset new images
@@ -90,7 +94,9 @@ export function ProjectForm({ project = null }) {
         type: formData.type.trim() || null,
         industry: formData.industry.trim() || null,
         liveWebsiteLink: formData.liveWebsiteLink.trim() || null,
+        liveWebsiteLabel: formData.liveWebsiteLabel.trim() || null,
         sdWorkLink: formData.sdWorkLink.trim() || null,
+        sdWorkLabel: formData.sdWorkLabel.trim() || null,
       }
 
       if (project) {
@@ -184,23 +190,43 @@ export function ProjectForm({ project = null }) {
         />
       </div>
 
-      <Input
-        label="Live Website Link"
-        name="liveWebsiteLink"
-        type="url"
-        value={formData.liveWebsiteLink}
-        onChange={handleChange}
-        placeholder="https://..."
-      />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Input
+          label="Live Website Link"
+          name="liveWebsiteLink"
+          type="url"
+          value={formData.liveWebsiteLink}
+          onChange={handleChange}
+          placeholder="https://..."
+        />
 
-      <Input
-        label="SD Work Label"
-        name="sdWorkLink"
-        type="url"
-        value={formData.sdWorkLink}
-        onChange={handleChange}
-        placeholder="https://..."
-      />
+        <Input
+          label="Live Website Label"
+          name="liveWebsiteLabel"
+          value={formData.liveWebsiteLabel}
+          onChange={handleChange}
+          placeholder="e.g., Visit Website"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Input
+          label="SD Work Link"
+          name="sdWorkLink"
+          type="url"
+          value={formData.sdWorkLink}
+          onChange={handleChange}
+          placeholder="https://..."
+        />
+
+        <Input
+          label="SD Work Label"
+          name="sdWorkLabel"
+          value={formData.sdWorkLabel}
+          onChange={handleChange}
+          placeholder="e.g., View on SD Work"
+        />
+      </div>
 
       <div className="flex gap-4 pt-4">
         <Button

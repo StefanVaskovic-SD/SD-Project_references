@@ -175,39 +175,44 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Input
-          label="Presentation name"
-          value={pageName}
-          onChange={(e) => {
-            setPageName(e.target.value)
-            if (errors.pageName) setErrors((prev) => ({ ...prev, pageName: '' }))
-          }}
-          placeholder="Real estate all projects"
-          required
-          error={errors.pageName}
-        />
+        <div>
+          <Input
+            label="Presentation name"
+            value={pageName}
+            onChange={(e) => {
+              setPageName(e.target.value)
+              if (errors.pageName) setErrors((prev) => ({ ...prev, pageName: '' }))
+            }}
+            placeholder="Real estate all projects"
+            required
+            error={errors.pageName}
+          />
+          <div className="mt-2 p-3 bg-white/5 border border-white/10 rounded-lg">
+            <p className="text-sm text-white/80 leading-relaxed">
+              Use name of the client or general name (for ex. Real estate all projects)
+            </p>
+          </div>
+        </div>
 
-        <Input
-          label="URL Slug"
-          value={slug}
-          onChange={(e) => {
-            setSlug(e.target.value)
-            if (errors.slug) setErrors((prev) => ({ ...prev, slug: '' }))
-          }}
-          placeholder="real-estate-portfolio"
-          required
-          error={errors.slug}
-          helpText="Used in the presentation URL"
-        />
-      </div>
-
-      <div className="mb-4 p-4 bg-white/5 border border-white/10 rounded-lg">
-        <p className="text-sm text-white/80 leading-relaxed mb-2">
-          <strong className="text-white">Presentation name:</strong> Use name of the client or general name (for ex. Real estate all projects)
-        </p>
-        <p className="text-sm text-white/80 leading-relaxed">
-          <strong className="text-white">URL Slug:</strong> Use something unique &lt;client name&gt;-real-estate-portfolio
-        </p>
+        <div>
+          <Input
+            label="URL Slug"
+            value={slug}
+            onChange={(e) => {
+              setSlug(e.target.value)
+              if (errors.slug) setErrors((prev) => ({ ...prev, slug: '' }))
+            }}
+            placeholder="real-estate-portfolio"
+            required
+            error={errors.slug}
+            helpText="Used in the presentation URL"
+          />
+          <div className="mt-2 p-3 bg-white/5 border border-white/10 rounded-lg">
+            <p className="text-sm text-white/80 leading-relaxed">
+              Use something unique &lt;client name&gt;-real-estate-portfolio
+            </p>
+          </div>
+        </div>
       </div>
 
       {slug && (
