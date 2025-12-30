@@ -1,43 +1,10 @@
 import { useState, useEffect } from 'react'
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core'
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, X, Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff } from 'lucide-react'
 import { Button } from '../ui/Button'
 
-function SortableSlideItem({ slide, index, isSelected, onToggle, onDelete }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: slide })
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  }
-
+function SlideItem({ slide, index, isSelected, onToggle }) {
   return (
     <div
-      ref={setNodeRef}
-      style={style}
       className={`
         flex items-center gap-3 p-3 border rounded-lg
         ${isSelected 
@@ -46,16 +13,6 @@ function SortableSlideItem({ slide, index, isSelected, onToggle, onDelete }) {
         }
       `}
     >
-      <button
-        type="button"
-        {...attributes}
-        {...listeners}
-        className="p-1 text-white/60 hover:text-white cursor-grab active:cursor-grabbing"
-        title="Drag to reorder"
-      >
-        <GripVertical className="w-4 h-4" />
-      </button>
-
       <div className="flex-1 flex items-center gap-3">
         <img
           src={slide}
@@ -65,30 +22,18 @@ function SortableSlideItem({ slide, index, isSelected, onToggle, onDelete }) {
         <span className="text-white/80 text-sm">Slide {index + 1}</span>
       </div>
 
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={onToggle}
-          className="p-2 text-white/60 hover:text-white hover:bg-white/5 rounded transition-colors"
-          title={isSelected ? 'Hide slide' : 'Show slide'}
-        >
-          {isSelected ? (
-            <Eye className="w-4 h-4" />
-          ) : (
-            <EyeOff className="w-4 h-4" />
-          )}
-        </button>
-        {!isSelected && (
-          <button
-            type="button"
-            onClick={onDelete}
-            className="p-2 text-white/60 hover:text-red-500 hover:bg-white/5 rounded transition-colors"
-            title="Remove slide"
-          >
-            <X className="w-4 h-4" />
-          </button>
+      <button
+        type="button"
+        onClick={onToggle}
+        className="p-2 text-white/60 hover:text-white hover:bg-white/5 rounded transition-colors"
+        title={isSelected ? 'Hide slide' : 'Show slide'}
+      >
+        {isSelected ? (
+          <Eye className="w-4 h-4" />
+        ) : (
+          <EyeOff className="w-4 h-4" />
         )}
-      </div>
+      </button>
     </div>
   )
 }
@@ -102,13 +47,6 @@ export function ProjectSlidesManager({
 }) {
   const [allSlides, setAllSlides] = useState([])
   const [selectedSlideUrls, setSelectedSlideUrls] = useState([])
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  )
 
   useEffect(() => {
     if (project && project.slides) {
@@ -132,42 +70,11 @@ export function ProjectSlidesManager({
     }
   }
 
-  const handleDeleteSlide = (slideUrl) => {
-    setAllSlides(prev => prev.filter(url => url !== slideUrl))
-    setSelectedSlideUrls(prev => prev.filter(url => url !== slideUrl))
-  }
-
-  const handleDragEnd = (event) => {
-    event.stopPropagation()
-    const { active, over } = event
-
-    if (over && active.id !== over.id) {
-      setSelectedSlideUrls((items) => {
-        const oldIndex = items.findIndex((url) => url === active.id)
-        const newIndex = items.findIndex((url) => url === over.id)
-        if (oldIndex === -1 || newIndex === -1) return items
-        return arrayMove(items, oldIndex, newIndex)
-      })
-    }
-  }
-
-  const handleDragStart = (event) => {
-    event.stopPropagation()
-  }
-
   const handleSave = () => {
     if (onSave) {
       onSave(selectedSlideUrls)
     }
     onClose()
-  }
-
-  const handleSelectAll = () => {
-    setSelectedSlideUrls([...allSlides])
-  }
-
-  const handleDeselectAll = () => {
-    setSelectedSlideUrls([])
   }
 
   if (!isOpen || !project) return null
@@ -194,7 +101,7 @@ export function ProjectSlidesManager({
             Manage Slides: {project.name}
           </h2>
           <p className="text-white/60 text-sm">
-            Select slides to include and reorder them. Hidden slides won't appear in the presentation.
+            Select slides to include. Hidden slides won't appear in the presentation.
           </p>
         </div>
 
@@ -203,52 +110,20 @@ export function ProjectSlidesManager({
           {/* Selected Slides */}
           {selectedSlidesList.length > 0 && (
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-medium text-white">
-                  Selected Slides ({selectedSlidesList.length})
-                </h3>
-                <div className="flex gap-2">
-                  <Button
-                    variant="secondary"
-                    onClick={handleSelectAll}
-                    className="text-sm"
-                  >
-                    Select All
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    onClick={handleDeselectAll}
-                    className="text-sm"
-                  >
-                    Deselect All
-                  </Button>
-                </div>
+              <h3 className="text-lg font-medium text-white mb-3">
+                Selected Slides ({selectedSlidesList.length})
+              </h3>
+              <div className="space-y-2">
+                {selectedSlidesList.map((slide, index) => (
+                  <SlideItem
+                    key={slide}
+                    slide={slide}
+                    index={index}
+                    isSelected={true}
+                    onToggle={() => handleToggleSlide(slide)}
+                  />
+                ))}
               </div>
-
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={selectedSlidesList}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <div className="space-y-2">
-                    {selectedSlidesList.map((slide, index) => (
-                      <SortableSlideItem
-                        key={slide}
-                        slide={slide}
-                        index={index}
-                        isSelected={true}
-                        onToggle={() => handleToggleSlide(slide)}
-                        onDelete={() => handleDeleteSlide(slide)}
-                      />
-                    ))}
-                  </div>
-                </SortableContext>
-              </DndContext>
             </div>
           )}
 
@@ -260,13 +135,12 @@ export function ProjectSlidesManager({
               </h3>
               <div className="space-y-2">
                 {unselectedSlidesList.map((slide, index) => (
-                  <SortableSlideItem
+                  <SlideItem
                     key={slide}
                     slide={slide}
                     index={allSlides.indexOf(slide)}
                     isSelected={false}
                     onToggle={() => handleToggleSlide(slide)}
-                    onDelete={() => handleDeleteSlide(slide)}
                   />
                 ))}
               </div>

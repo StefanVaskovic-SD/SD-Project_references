@@ -284,7 +284,7 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
         <div className="mb-4 p-4 bg-white/5 border border-white/10 rounded-lg">
           <p className="text-sm text-white/80 leading-relaxed">
             Follow the structure when creating new presentation: Opening slide, Break slide if there will be more than one category (for ex. product and website & brand). 
-            Add as much projects you'd like to showcase; select slides for each project and reorder them.
+            Add as much projects you'd like to showcase; select slides for each project.
             Click Save to generate the link (it can be updated afterwards on the edit icon in the list of presentations)
           </p>
         </div>
