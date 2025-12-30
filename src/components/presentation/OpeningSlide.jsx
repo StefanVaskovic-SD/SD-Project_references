@@ -48,7 +48,7 @@ export function OpeningSlide({ videoUrl = 'https://customer-7ahfkoeo2pbpo29s.clo
         </div>
 
         {/* Portfolio Text - Bottom Center */}
-        <div className="flex-1 flex items-end justify-center pb-12">
+        <div className="flex-1 flex items-end pb-12">
           <h1 className="text-white text-8xl md:text-9xl font-medium tracking-tight" style={{ fontFamily: 'SuisseIntl', fontWeight: 500 }}>
             Portfolio
           </h1>
