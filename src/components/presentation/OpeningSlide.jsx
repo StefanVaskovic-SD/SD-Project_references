@@ -11,12 +11,13 @@ export function OpeningSlide({
   const videoRef = useRef(null)
   const expandedVideoRef = useRef(null)
   const hlsRef = useRef(null)
+  const expandedHlsRef = useRef(null)
   const [isVideoExpanded, setIsVideoExpanded] = useState(false)
 
   // Initialize video in normal view
   useEffect(() => {
     const video = videoRef.current
-    if (!video || isVideoExpanded) return
+    if (!video) return
 
     let hls = null
 
@@ -38,7 +39,7 @@ export function OpeningSlide({
         hls.destroy()
       }
     }
-  }, [videoUrl, isVideoExpanded])
+  }, [videoUrl])
 
   // Initialize video in expanded view
   useEffect(() => {
@@ -56,6 +57,7 @@ export function OpeningSlide({
           console.error('Error playing video:', err)
         })
       })
+      expandedHlsRef.current = hls
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       // Native HLS support (Safari)
       video.src = videoUrl
@@ -131,16 +133,14 @@ export function OpeningSlide({
       {/* Right Section - Video Container (always rendered) */}
       <div className={`absolute right-0 top-0 w-1/2 h-full flex items-center justify-center p-8 transition-opacity duration-300 z-10 ${isVideoExpanded ? 'opacity-0 pointer-events-none' : ''}`}>
         <div className="relative w-full h-full max-w-2xl rounded-lg overflow-hidden border-2" style={{ borderColor: 'rgba(59, 130, 246, 0.3)' }}>
-          {/* Video - always rendered but conditionally styled */}
-          {!isVideoExpanded && (
-            <video
-              ref={videoRef}
-              className="w-full h-full object-cover"
-              loop
-              muted
-              playsInline
-            />
-          )}
+          {/* Video - always rendered */}
+          <video
+            ref={videoRef}
+            className="w-full h-full object-cover"
+            loop
+            muted
+            playsInline
+          />
 
           {/* Play Button Overlay - Centered */}
           {!isVideoExpanded && (
