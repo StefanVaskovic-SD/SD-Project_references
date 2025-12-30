@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { AdminLayout } from '../../components/layout/AdminLayout'
 import { useProjects } from '../../hooks/useProjects'
 import { usePages } from '../../hooks/usePages'
-import { FolderKanban, FileText, Edit, Trash2, Copy, ExternalLink } from 'lucide-react'
+import { Plus, Edit, Trash2, Copy, ExternalLink } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Button } from '../../components/ui/Button'
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog'
@@ -51,22 +51,14 @@ export function Dashboard() {
   return (
     <AdminLayout>
       <div className="space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Start here</h1>
-          <p className="text-white/60">This is a tool used for showcasing projects in our portfolio</p>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Link to="/admin/projects/new">
-            <Button variant="primary" className="w-full flex items-center justify-center">
-              <FolderKanban className="w-4 h-4 mr-2" />
-              New Project
-            </Button>
-          </Link>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">Start here</h1>
+            <p className="text-white/60">This is a tool used for showcasing projects in our portfolio</p>
+          </div>
           <Link to="/admin/pages/new">
-            <Button variant="primary" className="w-full flex items-center justify-center">
-              <FileText className="w-4 h-4 mr-2" />
+            <Button variant="primary">
+              <Plus className="w-4 h-4 mr-2 inline" />
               New Presentation
             </Button>
           </Link>
