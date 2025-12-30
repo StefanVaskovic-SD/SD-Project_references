@@ -53,7 +53,7 @@ export function OpeningSlide({
         </div>
 
         {/* Portfolio Text - Bottom Center */}
-        <div className="flex-1 flex items-end justify-center pb-12">
+        <div className="flex-1 flex items-end pb-12">
           <h1 
             className="text-white tracking-tight"
             style={{ 
