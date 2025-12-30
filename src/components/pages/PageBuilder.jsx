@@ -35,11 +35,7 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
   const [loading, setLoading] = useState(false)
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
+    useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -146,9 +142,6 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
   }
 
   const handleDragEnd = (event) => {
-    event.preventDefault()
-    event.stopPropagation()
-    
     const { active, over } = event
 
     if (over && active.id !== over.id) {
@@ -161,11 +154,6 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
         return newItems.map((item, index) => ({ ...item, order: index }))
       })
     }
-  }
-
-  const handleDragStart = (event) => {
-    event.preventDefault()
-    event.stopPropagation()
   }
 
   const validate = () => {
@@ -215,7 +203,7 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
 
   return (
     <>
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6" onDragOver={(e) => e.preventDefault()}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <Input
@@ -316,7 +304,6 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
           >
             <SortableContext
