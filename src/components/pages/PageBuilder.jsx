@@ -234,7 +234,6 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
             placeholder="real-estate-portfolio"
             required
             error={errors.slug}
-            helpText="Used in the presentation URL"
           />
           <div className="mt-2 p-3 bg-white/5 border border-white/10 rounded-lg">
             <p className="text-sm text-white/80 leading-relaxed">
@@ -282,11 +281,11 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
         </div>
 
         <div className="mb-4 p-4 bg-white/5 border border-white/10 rounded-lg">
-          <p className="text-sm text-white/80 leading-relaxed">
-            Follow the structure when creating new presentation: Opening slide, Break slide if there will be more than one category (for ex. product and website & brand). 
-            Add as much projects you'd like to showcase; select slides for each project.
-            Click Save to generate the link (it can be updated afterwards on the edit icon in the list of presentations)
-          </p>
+          <ul className="text-sm text-white/80 leading-relaxed space-y-2 list-disc list-inside">
+            <li>Follow the structure when creating new presentation: Opening slide, Break slide if there will be more than one category (for ex. product and website & brand).</li>
+            <li>Add as much projects you'd like to showcase; select slides for each project.</li>
+            <li>Click Save to generate the link (it can be updated afterwards on the edit icon in the list of presentations)</li>
+          </ul>
         </div>
 
         {errors.content && (

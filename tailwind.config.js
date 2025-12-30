@@ -11,6 +11,13 @@ export default {
         black: '#000000',
         white: '#FFFFFF',
       },
+      fontFamily: {
+        sans: ['SuisseIntl', 'Inter', 'sans-serif'],
+      },
+      fontWeight: {
+        normal: '400',
+        medium: '500',
+      },
     },
   },
   plugins: [],

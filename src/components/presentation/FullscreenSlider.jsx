@@ -2,6 +2,8 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation, Pagination, Keyboard } from 'swiper/modules'
 import { ProjectSlide } from './ProjectSlide'
 import { SlideBreakSlide } from './SlideBreakSlide'
+import { OpeningSlide } from './OpeningSlide'
+import { ClosingSlide } from './ClosingSlide'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 export function FullscreenSlider({ slides }) {
@@ -35,6 +37,12 @@ export function FullscreenSlider({ slides }) {
         allowTouchMove={true}
         className="!w-screen !h-screen"
       >
+        {/* Opening Slide - Always First */}
+        <SwiperSlide key="opening" className="!w-screen !h-screen">
+          <OpeningSlide />
+        </SwiperSlide>
+
+        {/* Content Slides */}
         {slides.map((slide, index) => (
           <SwiperSlide key={index} className="!w-screen !h-screen">
             {slide.type === 'project' ? (
@@ -54,6 +62,11 @@ export function FullscreenSlider({ slides }) {
             )}
           </SwiperSlide>
         ))}
+
+        {/* Closing Slide - Always Last */}
+        <SwiperSlide key="closing" className="!w-screen !h-screen">
+          <ClosingSlide />
+        </SwiperSlide>
       </Swiper>
 
       {/* Custom Navigation Buttons */}
