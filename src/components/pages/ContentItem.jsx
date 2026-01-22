@@ -48,10 +48,20 @@ export function ContentItem({
             <div className="flex-1">
               {project ? (
                 <>
-                  <div className="flex items-center gap-3 flex-wrap">
+                  <div className="flex items-center gap-1 flex-wrap">
                     <h4 className="font-medium text-white">{project.name}</h4>
-                    {project.type && <span className="text-sm text-white/60">{project.type}</span>}
-                    {project.industry && <span className="text-sm text-white/60">{project.industry}</span>}
+                    {project.type && (
+                      <>
+                        <span className="text-sm text-white/60">,</span>
+                        <span className="text-sm text-white/60">{project.type}</span>
+                      </>
+                    )}
+                    {project.industry && (
+                      <>
+                        <span className="text-sm text-white/60">,</span>
+                        <span className="text-sm text-white/60">{project.industry}</span>
+                      </>
+                    )}
                   </div>
                   {project.slides && project.slides.length > 0 && (
                     <div className="mt-2">
@@ -73,12 +83,12 @@ export function ContentItem({
               )}
             </div>
           ) : (
-            <div className="flex-1">
-              <h4 className="font-medium text-white mb-1">
-                <span className="text-white/60">Brake slide</span> {item.title || 'Untitled Break'}
+            <div className="flex-1 flex items-center">
+              <h4 className="font-medium text-white">
+                <span className="text-white/60">Brake slide:</span> {item.title || 'Untitled Break'}
               </h4>
               {item.text && (
-                <p className="text-white/60 text-sm">{item.text}</p>
+                <p className="text-white/60 text-sm ml-2">{item.text}</p>
               )}
             </div>
           )}
