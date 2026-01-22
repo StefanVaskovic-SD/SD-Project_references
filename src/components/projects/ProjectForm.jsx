@@ -5,7 +5,7 @@ import { Input } from '../ui/Input'
 import { Select } from '../ui/Select'
 import { ImageUploader } from './ImageUploader'
 import { createProject, updateProject } from '../../hooks/useProjects'
-import { uploadMultipleFiles } from '../../lib/storage'
+import { uploadMultipleFiles, deleteFile } from '../../lib/storage'
 import toast from 'react-hot-toast'
 import { Loader2 } from 'lucide-react'
 
@@ -23,6 +23,7 @@ export function ProjectForm({ project = null }) {
   })
   const [images, setImages] = useState([])
   const [existingImages, setExistingImages] = useState([])
+  const [originalImages, setOriginalImages] = useState([]) // Track original images to detect deletions
   const [errors, setErrors] = useState({})
 
   useEffect(() => {
@@ -36,10 +37,13 @@ export function ProjectForm({ project = null }) {
         sdWorkLink: project.sdWorkLink || '',
         sdWorkLabel: project.sdWorkLabel || '',
       })
-      setExistingImages(project.slides || [])
+      const projectSlides = project.slides || []
+      setExistingImages(projectSlides)
+      setOriginalImages(projectSlides) // Save original to detect deletions
       setImages([]) // Reset new images
     } else {
       setExistingImages([])
+      setOriginalImages([])
       setImages([])
     }
   }, [project])
@@ -78,10 +82,56 @@ export function ProjectForm({ project = null }) {
     setLoading(true)
 
     try {
+      // If editing existing project, delete removed images from Storage
+      if (project && project.id) {
+        const imagesToDelete = originalImages.filter(
+          (url) => !existingImages.includes(url)
+        )
+
+        if (imagesToDelete.length > 0) {
+          // Delete removed images from Storage
+          const deletePromises = imagesToDelete.map((url) => {
+            try {
+              // Try to extract path from URL
+              // Method 1: Extract from pathname (Firebase Storage URL format)
+              // URL format: https://firebasestorage.googleapis.com/v0/b/.../o/projects%2FprojectId%2Fslide-0.jpg?alt=media&token=...
+              try {
+                const urlObj = new URL(url)
+                const pathMatch = urlObj.pathname.match(/\/o\/(.+)\?/)
+                if (pathMatch) {
+                  // Decode the path (it's URL encoded)
+                  const encodedPath = pathMatch[1]
+                  const decodedPath = decodeURIComponent(encodedPath)
+                  return deleteFile(decodedPath)
+                }
+              } catch (e) {
+                // If URL parsing fails, try method 2
+              }
+
+              // Method 2: Extract directly from URL string (simpler format)
+              // Look for pattern: projects/projectId/filename
+              const directMatch = url.match(/projects\/([^/]+)\/([^?]+)/)
+              if (directMatch) {
+                const [, projectId, fileName] = directMatch
+                return deleteFile(`projects/${projectId}/${fileName}`)
+              }
+
+              console.warn('Could not extract path from URL:', url)
+              return Promise.resolve()
+            } catch (error) {
+              console.error('Error parsing URL for deletion:', url, error)
+              return Promise.resolve()
+            }
+          })
+          await Promise.all(deletePromises)
+        }
+      }
+
       let imageUrls = [...existingImages]
 
       // Upload new images if any
       if (images.length > 0) {
+        // Use existing project ID if editing, otherwise we'll get it after creation
         const projectId = project?.id || `temp-${Date.now()}`
         const basePath = `projects/${projectId}`
         const newUrls = await uploadMultipleFiles(images, basePath)
