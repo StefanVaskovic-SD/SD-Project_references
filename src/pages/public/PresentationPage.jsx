@@ -58,11 +58,14 @@ export function PresentationPage() {
               // Check if selectedSlides contains URLs (old format) or indices (new format)
               const firstItem = item.selectedSlides[0]
               if (typeof firstItem === 'string' && firstItem.startsWith('http')) {
-                // Old format: URLs - filter by matching URLs
-                slidesToUse = allProjectSlides.filter(slide => item.selectedSlides.includes(slide))
+                // Old format: URLs - filter by matching URLs, maintain project order
+                const urlSet = new Set(item.selectedSlides)
+                slidesToUse = allProjectSlides.filter(slide => urlSet.has(slide))
               } else if (typeof firstItem === 'number') {
                 // New format: indices - use indices to get slides
-                slidesToUse = item.selectedSlides
+                // Sort indices to maintain project order (0, 1, 2, ...)
+                const sortedIndices = [...item.selectedSlides].sort((a, b) => a - b)
+                slidesToUse = sortedIndices
                   .map(index => allProjectSlides[index])
                   .filter(slide => slide !== undefined)
               } else {

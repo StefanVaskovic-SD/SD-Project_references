@@ -63,20 +63,21 @@ export function ProjectSlidesManager({
       if (selectedSlides && selectedSlides.length > 0) {
         const firstItem = selectedSlides[0]
         if (typeof firstItem === 'string' && firstItem.startsWith('http')) {
-          // Old format: URLs - convert to indices
+          // Old format: URLs - convert to indices, maintain project order
           const indices = project.slides
             .map((slide, index) => selectedSlides.includes(slide) ? index : -1)
             .filter(index => index !== -1)
-          setSelectedSlideIndices(indices)
+          // Sort to maintain project order
+          setSelectedSlideIndices(indices.sort((a, b) => a - b))
         } else if (typeof firstItem === 'number') {
-          // New format: already indices
-          setSelectedSlideIndices(selectedSlides)
+          // New format: already indices - sort to maintain project order
+          setSelectedSlideIndices([...selectedSlides].sort((a, b) => a - b))
         } else {
           // Fallback: select all
           setSelectedSlideIndices(project.slides.map((_, index) => index))
         }
       } else {
-        // No selectedSlides - select all slides
+        // No selectedSlides - select all slides in project order
         setSelectedSlideIndices(project.slides.map((_, index) => index))
       }
     }
@@ -85,10 +86,10 @@ export function ProjectSlidesManager({
   const handleToggleSlide = (slideIndex) => {
     if (selectedSlideIndices.includes(slideIndex)) {
       // Remove from selected
-      setSelectedSlideIndices(prev => prev.filter(idx => idx !== slideIndex))
+      setSelectedSlideIndices(prev => prev.filter(idx => idx !== slideIndex).sort((a, b) => a - b))
     } else {
-      // Add to selected - maintain order (add at the end)
-      setSelectedSlideIndices(prev => [...prev, slideIndex])
+      // Add to selected - maintain project order (sort after adding)
+      setSelectedSlideIndices(prev => [...prev, slideIndex].sort((a, b) => a - b))
     }
   }
 
@@ -96,8 +97,9 @@ export function ProjectSlidesManager({
     e?.preventDefault()
     e?.stopPropagation()
     if (onSave) {
-      // Save as indices (new format)
-      onSave(selectedSlideIndices)
+      // Save as indices (new format), sorted to maintain project order
+      const sortedIndices = [...selectedSlideIndices].sort((a, b) => a - b)
+      onSave(sortedIndices)
     }
     onClose()
   }

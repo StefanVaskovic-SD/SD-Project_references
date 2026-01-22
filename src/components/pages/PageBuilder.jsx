@@ -99,7 +99,7 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
     return projects.find((p) => p.id === projectId)
   }
 
-  // Migrate selectedSlides from URLs to indices and initialize missing selectedSlides when project data is available
+  // Migrate selectedSlides from URLs to indices, initialize missing selectedSlides, and add new slides automatically
   useEffect(() => {
     if (projects.length > 0 && content.length > 0) {
       const needsUpdate = content.some(item => 
@@ -108,7 +108,21 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
           !item.selectedSlides
         )
       )
-      if (needsUpdate) {
+      
+      // Check if any project has new slides that need to be added to selectedSlides
+      const hasNewSlides = content.some(item => {
+        if (item.type === 'project' && item.selectedSlides && item.selectedSlides.length > 0) {
+          const project = getProjectById(item.projectId)
+          if (project && project.slides) {
+            // Check if project has more slides than selected
+            const maxSelectedIndex = Math.max(...item.selectedSlides.filter(idx => typeof idx === 'number'))
+            return project.slides.length > maxSelectedIndex + 1
+          }
+        }
+        return false
+      })
+
+      if (needsUpdate || hasNewSlides) {
         setContent(prevContent => {
           let hasChanges = false
           const updated = prevContent.map(item => {
@@ -121,12 +135,25 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
                     .map((url) => project.slides.indexOf(url))
                     .filter(index => index !== -1)
                   hasChanges = true
-                  return { ...item, selectedSlides: indices, _needsMigration: false }
+                  return { ...item, selectedSlides: indices.sort((a, b) => a - b), _needsMigration: false }
                 } else if (!item.selectedSlides) {
-                  // Initialize: select all slides
+                  // Initialize: select all slides in project order
                   const indices = project.slides.map((_, index) => index)
                   hasChanges = true
                   return { ...item, selectedSlides: indices }
+                } else if (item.selectedSlides && item.selectedSlides.length > 0) {
+                  // Check if there are new slides to add
+                  const currentIndices = item.selectedSlides.filter(idx => typeof idx === 'number')
+                  const maxIndex = Math.max(...currentIndices, -1)
+                  const newSlidesCount = project.slides.length - (maxIndex + 1)
+                  
+                  if (newSlidesCount > 0) {
+                    // Add new slides (they come after existing ones)
+                    const newIndices = Array.from({ length: newSlidesCount }, (_, i) => maxIndex + 1 + i)
+                    const allIndices = [...currentIndices, ...newIndices].sort((a, b) => a - b)
+                    hasChanges = true
+                    return { ...item, selectedSlides: allIndices }
+                  }
                 }
               }
             }
