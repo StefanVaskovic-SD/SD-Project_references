@@ -54,27 +54,41 @@ export function ProjectSlidesManager({
   onSave 
 }) {
   const [allSlides, setAllSlides] = useState([])
-  const [selectedSlideUrls, setSelectedSlideUrls] = useState([])
+  const [selectedSlideIndices, setSelectedSlideIndices] = useState([])
 
   useEffect(() => {
     if (project && project.slides) {
       setAllSlides(project.slides)
-      // If selectedSlides exists, use it, otherwise select all slides
+      // If selectedSlides exists, convert to indices if needed
       if (selectedSlides && selectedSlides.length > 0) {
-        setSelectedSlideUrls(selectedSlides)
+        const firstItem = selectedSlides[0]
+        if (typeof firstItem === 'string' && firstItem.startsWith('http')) {
+          // Old format: URLs - convert to indices
+          const indices = project.slides
+            .map((slide, index) => selectedSlides.includes(slide) ? index : -1)
+            .filter(index => index !== -1)
+          setSelectedSlideIndices(indices)
+        } else if (typeof firstItem === 'number') {
+          // New format: already indices
+          setSelectedSlideIndices(selectedSlides)
+        } else {
+          // Fallback: select all
+          setSelectedSlideIndices(project.slides.map((_, index) => index))
+        }
       } else {
-        setSelectedSlideUrls(project.slides)
+        // No selectedSlides - select all slides
+        setSelectedSlideIndices(project.slides.map((_, index) => index))
       }
     }
   }, [project, selectedSlides])
 
-  const handleToggleSlide = (slideUrl) => {
-    if (selectedSlideUrls.includes(slideUrl)) {
+  const handleToggleSlide = (slideIndex) => {
+    if (selectedSlideIndices.includes(slideIndex)) {
       // Remove from selected
-      setSelectedSlideUrls(prev => prev.filter(url => url !== slideUrl))
+      setSelectedSlideIndices(prev => prev.filter(idx => idx !== slideIndex))
     } else {
-      // Add to selected
-      setSelectedSlideUrls(prev => [...prev, slideUrl])
+      // Add to selected - maintain order (add at the end)
+      setSelectedSlideIndices(prev => [...prev, slideIndex])
     }
   }
 
@@ -82,15 +96,22 @@ export function ProjectSlidesManager({
     e?.preventDefault()
     e?.stopPropagation()
     if (onSave) {
-      onSave(selectedSlideUrls)
+      // Save as indices (new format)
+      onSave(selectedSlideIndices)
     }
     onClose()
   }
 
   if (!isOpen || !project) return null
 
-  const selectedSlidesList = allSlides.filter(slide => selectedSlideUrls.includes(slide))
-  const unselectedSlidesList = allSlides.filter(slide => !selectedSlideUrls.includes(slide))
+  const selectedSlidesList = selectedSlideIndices.map(index => ({
+    index,
+    url: allSlides[index]
+  })).filter(item => item.url !== undefined)
+
+  const unselectedSlidesList = allSlides
+    .map((slide, index) => ({ index, url: slide }))
+    .filter(item => !selectedSlideIndices.includes(item.index))
 
   const handleModalClick = (e) => {
     e.stopPropagation()
@@ -140,13 +161,13 @@ export function ProjectSlidesManager({
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => e.preventDefault()}
               >
-                {selectedSlidesList.map((slide, index) => (
+                {selectedSlidesList.map((item) => (
                   <SlideItem
-                    key={slide}
-                    slide={slide}
-                    index={index}
+                    key={item.index}
+                    slide={item.url}
+                    index={item.index}
                     isSelected={true}
-                    onToggle={() => handleToggleSlide(slide)}
+                    onToggle={() => handleToggleSlide(item.index)}
                   />
                 ))}
               </div>
@@ -164,13 +185,13 @@ export function ProjectSlidesManager({
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => e.preventDefault()}
               >
-                {unselectedSlidesList.map((slide, index) => (
+                {unselectedSlidesList.map((item) => (
                   <SlideItem
-                    key={slide}
-                    slide={slide}
-                    index={allSlides.indexOf(slide)}
+                    key={item.index}
+                    slide={item.url}
+                    index={item.index}
                     isSelected={false}
-                    onToggle={() => handleToggleSlide(slide)}
+                    onToggle={() => handleToggleSlide(item.index)}
                   />
                 ))}
               </div>

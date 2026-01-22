@@ -66,14 +66,33 @@ export function ContentItem({
                   {project.slides && project.slides.length > 0 && (
                     <div className="mt-2">
                       <div className="flex gap-2">
-                        {(item.selectedSlides || project.slides).slice(0, 3).map((slide, idx) => (
-                          <img
-                            key={idx}
-                            src={slide}
-                            alt={`${project.name} slide ${idx + 1}`}
-                            className="w-16 h-16 object-cover rounded border border-white/10"
-                          />
-                        ))}
+                        {(() => {
+                          // Get slides to display - handle both old (URLs) and new (indices) format
+                          let slidesToShow = []
+                          if (item.selectedSlides && item.selectedSlides.length > 0) {
+                            const firstItem = item.selectedSlides[0]
+                            if (typeof firstItem === 'string' && firstItem.startsWith('http')) {
+                              // Old format: URLs
+                              slidesToShow = item.selectedSlides.filter(url => project.slides.includes(url))
+                            } else if (typeof firstItem === 'number') {
+                              // New format: indices
+                              slidesToShow = item.selectedSlides
+                                .map(index => project.slides[index])
+                                .filter(slide => slide !== undefined)
+                            }
+                          } else {
+                            // No selectedSlides - show all
+                            slidesToShow = project.slides
+                          }
+                          return slidesToShow.slice(0, 3).map((slide, idx) => (
+                            <img
+                              key={idx}
+                              src={slide}
+                              alt={`${project.name} slide ${idx + 1}`}
+                              className="w-16 h-16 object-cover rounded border border-white/10"
+                            />
+                          ))
+                        })()}
                       </div>
                     </div>
                   )}

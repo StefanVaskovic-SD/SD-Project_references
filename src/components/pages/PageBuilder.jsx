@@ -53,10 +53,20 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
       setPageName(page.name || '')
       setSlug(page.slug || '')
       // Initialize selectedSlides for projects that don't have it
+      // Also migrate old format (URLs) to new format (indices) when projects are loaded
       const contentWithSlides = (page.content || []).map(item => {
-        if (item.type === 'project' && !item.selectedSlides) {
-          // For existing projects without selectedSlides, we'll set it when we have project data
-          return item
+        if (item.type === 'project') {
+          if (!item.selectedSlides) {
+            // For existing projects without selectedSlides, we'll set it when we have project data
+            return item
+          }
+          // Migrate old format (URLs) to new format (indices) if needed
+          const firstItem = item.selectedSlides[0]
+          if (firstItem && typeof firstItem === 'string' && firstItem.startsWith('http')) {
+            // Old format: URLs - need to convert to indices when we have project data
+            // We'll do this conversion when rendering, but mark it for migration
+            return { ...item, _needsMigration: true }
+          }
         }
         return item
       })
@@ -89,13 +99,54 @@ export function PageBuilder({ page = null, onSave, onCancel }) {
     return projects.find((p) => p.id === projectId)
   }
 
+  // Migrate selectedSlides from URLs to indices and initialize missing selectedSlides when project data is available
+  useEffect(() => {
+    if (projects.length > 0 && content.length > 0) {
+      const needsUpdate = content.some(item => 
+        item.type === 'project' && (
+          item._needsMigration || 
+          !item.selectedSlides
+        )
+      )
+      if (needsUpdate) {
+        setContent(prevContent => {
+          let hasChanges = false
+          const updated = prevContent.map(item => {
+            if (item.type === 'project') {
+              const project = getProjectById(item.projectId)
+              if (project && project.slides) {
+                if (item._needsMigration && item.selectedSlides) {
+                  // Convert URLs to indices
+                  const indices = item.selectedSlides
+                    .map((url) => project.slides.indexOf(url))
+                    .filter(index => index !== -1)
+                  hasChanges = true
+                  return { ...item, selectedSlides: indices, _needsMigration: false }
+                } else if (!item.selectedSlides) {
+                  // Initialize: select all slides
+                  const indices = project.slides.map((_, index) => index)
+                  hasChanges = true
+                  return { ...item, selectedSlides: indices }
+                }
+              }
+            }
+            return item
+          })
+          return hasChanges ? updated : prevContent
+        })
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projects])
+
   const handleAddProject = (project) => {
     const newItem = {
       id: `project-${Date.now()}`,
       type: 'project',
       projectId: project.id,
       order: content.length,
-      selectedSlides: project.slides || [], // Default: all slides selected
+      // Default: all slides selected (as indices)
+      selectedSlides: project.slides ? project.slides.map((_, index) => index) : [],
     }
     setContent([...content, newItem])
   }

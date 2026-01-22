@@ -50,10 +50,29 @@ export function PresentationPage() {
           const result = projectResults.find((r) => r?.item.projectId === item.projectId)
           if (result?.projectData) {
             const projectData = result.projectData
-            // Use selectedSlides if available, otherwise use all slides
-            const slidesToUse = item.selectedSlides && item.selectedSlides.length > 0
-              ? item.selectedSlides
-              : (projectData.slides || [])
+            const allProjectSlides = projectData.slides || []
+            
+            // Determine which slides to use
+            let slidesToUse = []
+            if (item.selectedSlides && item.selectedSlides.length > 0) {
+              // Check if selectedSlides contains URLs (old format) or indices (new format)
+              const firstItem = item.selectedSlides[0]
+              if (typeof firstItem === 'string' && firstItem.startsWith('http')) {
+                // Old format: URLs - filter by matching URLs
+                slidesToUse = allProjectSlides.filter(slide => item.selectedSlides.includes(slide))
+              } else if (typeof firstItem === 'number') {
+                // New format: indices - use indices to get slides
+                slidesToUse = item.selectedSlides
+                  .map(index => allProjectSlides[index])
+                  .filter(slide => slide !== undefined)
+              } else {
+                // Fallback: use all slides
+                slidesToUse = allProjectSlides
+              }
+            } else {
+              // No selectedSlides - use all slides
+              slidesToUse = allProjectSlides
+            }
             
             // Add each slide from the project as a separate slide
             if (slidesToUse.length > 0) {
