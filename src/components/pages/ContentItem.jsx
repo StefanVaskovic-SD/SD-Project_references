@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, X, FolderKanban, FileText } from 'lucide-react'
+import { GripVertical, X } from 'lucide-react'
 import { Button } from '../ui/Button'
 
 export function ContentItem({ 
@@ -45,51 +45,41 @@ export function ContentItem({
 
         <div className="flex-1">
           {item.type === 'project' ? (
-            <div className="flex items-center gap-4">
-              <FolderKanban className="w-5 h-5 text-white/60" />
-              <div className="flex-1">
-                {project ? (
-                  <>
-                    <h4 className="font-medium text-white mb-1">{project.name}</h4>
-                    <div className="flex gap-4 text-sm text-white/60">
-                      {project.type && <span>{project.type}</span>}
-                      {project.industry && <span>{project.industry}</span>}
-                    </div>
-                    {project.slides && project.slides.length > 0 && (
-                      <div className="mt-2">
-                        <div className="flex gap-2 mb-1">
-                          {(item.selectedSlides || project.slides).slice(0, 3).map((slide, idx) => (
-                            <img
-                              key={idx}
-                              src={slide}
-                              alt={`${project.name} slide ${idx + 1}`}
-                              className="w-16 h-16 object-cover rounded border border-white/10"
-                            />
-                          ))}
-                        </div>
-                        <p className="text-xs text-white/60">
-                          {item.selectedSlides 
-                            ? `${item.selectedSlides.length} of ${project.slides.length} slides selected`
-                            : `${project.slides.length} slides`
-                          }
-                        </p>
+            <div className="flex-1">
+              {project ? (
+                <>
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <h4 className="font-medium text-white">{project.name}</h4>
+                    {project.type && <span className="text-sm text-white/60">{project.type}</span>}
+                    {project.industry && <span className="text-sm text-white/60">{project.industry}</span>}
+                  </div>
+                  {project.slides && project.slides.length > 0 && (
+                    <div className="mt-2">
+                      <div className="flex gap-2">
+                        {(item.selectedSlides || project.slides).slice(0, 3).map((slide, idx) => (
+                          <img
+                            key={idx}
+                            src={slide}
+                            alt={`${project.name} slide ${idx + 1}`}
+                            className="w-16 h-16 object-cover rounded border border-white/10"
+                          />
+                        ))}
                       </div>
-                    )}
-                  </>
-                ) : (
-                  <p className="text-white/60">Loading project...</p>
-                )}
-              </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <p className="text-white/60">Loading project...</p>
+              )}
             </div>
           ) : (
-            <div className="flex items-center gap-4">
-              <FileText className="w-5 h-5 text-white/60" />
-              <div className="flex-1">
-                <h4 className="font-medium text-white mb-1">{item.title || 'Untitled Break'}</h4>
-                {item.text && (
-                  <p className="text-white/60 text-sm">{item.text}</p>
-                )}
-              </div>
+            <div className="flex-1">
+              <h4 className="font-medium text-white mb-1">
+                <span className="text-white/60">Brake slide</span> {item.title || 'Untitled Break'}
+              </h4>
+              {item.text && (
+                <p className="text-white/60 text-sm">{item.text}</p>
+              )}
             </div>
           )}
         </div>
