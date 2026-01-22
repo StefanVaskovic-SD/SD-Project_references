@@ -38,12 +38,16 @@ export async function deleteFile(path) {
  * Upload multiple files and return their URLs
  * @param {File[]} files - Array of files to upload
  * @param {string} basePath - Base storage path (e.g., 'projects/projectId')
+ * @param {number} startIndex - Starting index for file naming (default: 0)
  * @returns {Promise<string[]>} Array of download URLs
  */
-export async function uploadMultipleFiles(files, basePath) {
+export async function uploadMultipleFiles(files, basePath, startIndex = 0) {
   try {
     const uploadPromises = files.map((file, index) => {
-      const fileName = `slide-${index}.${file.name.split('.').pop()}`
+      // Use timestamp + index to ensure unique filenames
+      const timestamp = Date.now()
+      const fileExtension = file.name.split('.').pop() || 'webp'
+      const fileName = `slide-${timestamp}-${startIndex + index}.${fileExtension}`
       const path = `${basePath}/${fileName}`
       return uploadFile(file, path)
     })

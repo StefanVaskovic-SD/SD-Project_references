@@ -82,11 +82,22 @@ export function ProjectForm({ project = null }) {
     setLoading(true)
 
     try {
+      console.log('Submitting project:', {
+        projectId: project?.id,
+        existingImagesCount: existingImages.length,
+        newImagesCount: images.length,
+        originalImagesCount: originalImages.length,
+        existingImages,
+        originalImages
+      })
+
       // If editing existing project, delete removed images from Storage
       if (project && project.id) {
         const imagesToDelete = originalImages.filter(
           (url) => !existingImages.includes(url)
         )
+
+        console.log('Images to delete:', imagesToDelete)
 
         if (imagesToDelete.length > 0) {
           // Delete removed images from Storage
@@ -102,6 +113,7 @@ export function ProjectForm({ project = null }) {
                   // Decode the path (it's URL encoded)
                   const encodedPath = pathMatch[1]
                   const decodedPath = decodeURIComponent(encodedPath)
+                  console.log('Deleting file (method 1):', decodedPath)
                   return deleteFile(decodedPath)
                 }
               } catch (e) {
@@ -113,7 +125,9 @@ export function ProjectForm({ project = null }) {
               const directMatch = url.match(/projects\/([^/]+)\/([^?]+)/)
               if (directMatch) {
                 const [, projectId, fileName] = directMatch
-                return deleteFile(`projects/${projectId}/${fileName}`)
+                const path = `projects/${projectId}/${fileName}`
+                console.log('Deleting file (method 2):', path)
+                return deleteFile(path)
               }
 
               console.warn('Could not extract path from URL:', url)
@@ -127,15 +141,27 @@ export function ProjectForm({ project = null }) {
         }
       }
 
-      let imageUrls = [...existingImages]
+      // Start with existing images (those that weren't deleted)
+      // Make sure we have a fresh copy and filter out any undefined/null values
+      let imageUrls = existingImages ? existingImages.filter(url => url && url.trim()) : []
 
       // Upload new images if any
       if (images.length > 0) {
         // Use existing project ID if editing, otherwise we'll get it after creation
         const projectId = project?.id || `temp-${Date.now()}`
         const basePath = `projects/${projectId}`
+        console.log('Uploading new images to:', basePath, 'Count:', images.length)
         const newUrls = await uploadMultipleFiles(images, basePath)
-        imageUrls = [...existingImages, ...newUrls]
+        console.log('New URLs received:', newUrls)
+        // Combine existing and new URLs, ensuring no duplicates
+        imageUrls = [...imageUrls, ...newUrls.filter(url => url && url.trim())]
+      }
+
+      console.log('Final imageUrls before save:', imageUrls, 'Count:', imageUrls.length)
+      
+      // Ensure we have at least one image
+      if (imageUrls.length === 0) {
+        throw new Error('At least one image is required')
       }
 
       const projectData = {
